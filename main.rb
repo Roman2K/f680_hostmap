@@ -14,19 +14,41 @@ class Router
     @passwd_digest = Digest::SHA256.hexdigest(password + @passwd_rand)
   end
 
-  def dhcp_bindings
-    resp = request :Get do |r|
-      r.set_uri do |u|
-        u.path += "/getpage.gch"
-        u.query = "pid=1002&nextpage=net_dhcp_static_t.gch"
-      end
-    end
-    Net::HTTPOK === resp or raise "unexpected response: #{resp}"
+  DHCPBinding = Struct.new :ip, :mac
 
-    doc = Nokogiri::HTML.parse(resp.body)
+  def dhcp_bindings
+    table_contents_inst "net_dhcp_static_t", DHCPBinding,
+      "IPAddr", "MACAddr"
+  end
+
+  DNSHost = Struct.new :name, :ip
+
+  def dns_hosts
+    table_contents_inst "app_dev_name_t", DNSHost,
+      "HostNamedhcp", "IPAddressdhcp"
+  end
+
+  private def table_contents_inst(page, klass, *attrs)
+    table_contents(page, *attrs).map do |h|
+      klass.new *attrs.map { |k| h.fetch k }
+    end
+  end
+
+  private def table_contents(page, *attrs)
+    return enum_for :table_contents, page, *attrs unless block_given?
+
+    doc = Nokogiri::HTML.parse(request(:Get) { |r|
+      r.page_uri = page
+      r.expect Net::HTTPOK, page
+    }.body)
+
+    val_re = attrs.map { |a| Regexp.escape a }.yield_self do |as|
+      /\bTransfer_meaning\('(#{as.join "|"})(\d+)','(.+?)'\);/
+    end
+
     values = doc.css("script").each_with_object({}) do |el, h|
       begin
-        el.text =~ /\bTransfer_meaning\('(IPAddr|MACAddr)(\d+)','(.+?)'\);/
+        el.text =~ val_re
       rescue ArgumentError
         $!.message == "invalid byte sequence in UTF-8" or raise
         nil
@@ -34,20 +56,19 @@ class Router
       (h[$2] ||= {})[$1] = $3.gsub(/\\x(..)/) { $1.to_i(16).chr }
     end
 
-    doc.css("input[id^=IPAddr]").each_with_object [] do |el, arr|
-      id = el[:id][/^IPAddr(\d+)/, 1] or next
-      vs = values.fetch(id)
-      arr << DHCPBinding[vs.fetch("IPAddr"), vs.fetch("MACAddr")]
+    attr0 = attrs.fetch 0
+    doc.css("input[id^=#{attr0}]").each do |el|
+      id = el[:id][/^#{Regexp.escape attr0}(\d+)/, 1] or next
+      yield values.fetch(id)
     end
   end
-
-  DHCPBinding = Struct.new :ip, :mac
 
   private def log_in!
     last_closed = nil
     loop do
       closed = attempt_log_in! or break
       closed != last_closed or raise "failed to closed existing session #{c}"
+      last_closed = closed
     end
   end
 
@@ -67,20 +88,16 @@ class Router
         "UserRandomNum" => @passwd_rand,
         "Frm_Loginchecktoken" => form_val["Frm_Loginchecktoken"],
       }
+      r.expect Net::HTTPOK, Net::HTTPRedirection, "login"
     end
 
     @sid = CGI::Cookie.
       parse(resp["set-cookie"].tap { |s| s or raise "missing Set-Cookie" }).
       fetch("SID").fetch(0)
 
-    case resp
-    when Net::HTTPRedirection
-      # Logged in
+    if Net::HTTPRedirection === resp
+      # Logged in successfully
       return
-    when Net::HTTPOK
-      # Already logged in else where
-    else
-      raise "unexpected login response: #{resp}"
     end
 
     # List of currently active sessions: close the first one and try again
@@ -90,9 +107,9 @@ class Router
     $stderr.puts "already logged in elsewhere: %s" \
       % [tbl.css("label").map(&:text) * ", "]
 
-    sess_id = doc.css("input[type=radio]").first&.[](:value) \
+    sess_id = tbl.css("input[type=radio]").first&.[](:value) \
       or raise "missing session radio input"
-    sid = doc.css("input[name=sid#{sess_id}]").first&.[](:value) \
+    sid = tbl.css("input[name=sid#{sess_id}]").first&.[](:value) \
       or raise "missing session SID input"
 
     resp = do_request :Post do |r|
@@ -101,8 +118,8 @@ class Router
         "index" => sess_id,
         "sid#{sess_id}" => sid,
       }
+      r.expect Net::HTTPRedirection, "logout"
     end
-    Net::HTTPRedirection === resp or raise "unexpected logout response: #{resp}"
 
     $stderr.puts "closed other session"
     sess_id
@@ -111,32 +128,43 @@ class Router
   private def request(*args, &block)
     @sid or log_in!
     do_request *args, &block 
-    # TODO detect session timeout
   end
 
   private def do_request(type)
-    Request.new(type, @uri).tap { |req|
-      yield req if block_given?
-      req["Cookie"] = [req["Cookie"], "_TESTCOOKIESUPPORT=1"].
-        compact.
-        tap { |arr| arr << "SID=#{@sid}" if @sid }.
-        join "; "
-    }.perform
+    req = Request.new(type, @uri)
+    yield req if block_given?
+    req["Cookie"] = [req["Cookie"], "_TESTCOOKIESUPPORT=1"].
+      compact.
+      tap { |arr| arr << "SID=#{@sid}" if @sid }.
+      join "; "
+    req.perform
   end
 
   class Request
     def initialize(type, uri)
-      @uri = uri.dup
+      @orig_uri = @uri = uri
       @req = -> { Net::HTTP.const_get(type).new @uri }
     end
 
     def set_uri
       raise "uri can't be modified" unless Proc === @req
-      yield @uri
+      yield(@uri = @orig_uri.dup)
+    end
+    
+    def page_uri=(name)
+      set_uri do |u|
+        u.path += "/getpage.gch"
+        u.query = "pid=1002&nextpage=#{name}.gch"
+      end
     end
 
     def form=(data)
       final_req.set_form_data data
+    end
+
+    def expect(*types, action)
+      @expect = types
+      @expect_action = action
     end
 
     private def final_req
@@ -149,7 +177,15 @@ class Router
 
     def perform
       h, p, ssl = @uri.host, @uri.port, @uri.scheme == 'https'
-      Net::HTTP.start(h, p, use_ssl: ssl) { |http| http.request final_req }
+      Net::HTTP.
+        start(h, p, use_ssl: ssl) { |http| http.request final_req }.
+        tap { |resp|
+          @expect && @expect.size > 0 or next
+          case resp
+          when *@expect
+          else raise "unexpected %s response: %s" % [@expect_action, resp.code]
+          end
+        }
     end
   end
 end
@@ -159,3 +195,4 @@ router = Router.new url: config["router.url"],
   **config["router.credentials"].slice(:login, :password)
 
 pp dhcp_bindings: router.dhcp_bindings
+pp dns_hosts: router.dns_hosts

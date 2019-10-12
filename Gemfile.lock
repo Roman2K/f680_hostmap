@@ -1,5 +1,6 @@
-PATH
-  remote: ../utils-ruby
+GIT
+  remote: https://github.com/Roman2K/utils-ruby.git
+  revision: 49a138c5c3afd5faec09f6d0a8028de8be991af1
   specs:
     utils-ruby (0.1.0)
 

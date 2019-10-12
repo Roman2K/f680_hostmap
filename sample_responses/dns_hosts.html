@@ -1,0 +1,3468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>F680</title>
+<link rel="stylesheet" href="skin/priorgreen/css/template.css" type="text/css">
+<link rel="stylesheet" href="css/styleen.css" type="text/css">
+
+<script language="javascript">
+var g_errorInfo = "Error";
+var timeid;
+
+function getObj(id)
+{
+return(document.getElementById(id));
+}
+function jslSetValue(dst, src, action)
+{
+var src_o = getObj(src);
+var dst_o = getObj(dst);
+dst_o.value= String(src_o.value);
+switch (action)
+{
+case "GET":
+if (dst_o.setAttribute)
+{
+dst_o.setAttribute("_initValue", dst_o.value)
+}
+break;
+case "SET":
+if (src_o.getAttribute)
+{
+var initValue = src_o.getAttribute("_initValue");
+if (initValue == src_o.value)
+{
+dst_o.value = "NULL";
+}
+}
+break;
+default:
+break;
+}
+}
+function setValue(id,value)
+{
+if(getObj(id) != null)
+{
+getObj(id).value = value;
+}
+}
+function Transfer_meaning(id,value)
+{
+getObj(id).value = value;
+}
+function getValue(id)
+{
+return(getObj(id).value);
+}
+function setHTML(id, html)
+{
+getObj(id).innerHTML = html;
+}
+function getHTML(id)
+{
+return (getObj(id).innerHTML);
+}
+function getDisabled(id)
+{
+return(getObj(id).disabled);
+}
+function getDisplay(id)
+{
+if(getObj(id).style.display == "none")
+return false;
+else
+return true;
+}
+function getChecked(id)
+{
+return(getObj(id).checked);
+}
+function setChecked(id,value)
+{
+if(getObj(id) != null)
+{
+getObj(id).checked = value;
+}
+}
+function jslDiDisplay(id)
+{
+var i = 0;
+var num = arguments.length;
+for(;i < num; i++)
+{
+if(getObj(arguments[i]) != null)
+getObj(arguments[i]).style.display = "none";
+}
+}
+function jslEnDisplay(id)
+{
+var i = 0;
+var num=arguments.length;
+for(;i < num; i++)
+{
+if(getObj(arguments[i]) != null)
+getObj(arguments[i]).style.display = "";
+}
+}
+function jslDisable(id)
+{
+var i = 0;
+var num = arguments.length;
+for(;i < num; i++)
+{
+if(getObj(arguments[i]) != null)
+{
+getObj(arguments[i]).disabled = true;
+}
+}
+}
+function jslEnable(id)
+{
+var i = 0;
+var num=arguments.length;
+for(;i < num; i++)
+{
+if(getObj(arguments[i]) != null)
+{
+getObj(arguments[i]).disabled=false;
+}
+}
+}
+function HiddenParaInit(arr)
+{
+var num = arguments.length;
+for(var i=0; i<num; i++)
+{
+var leng = arguments[i].length;
+for(var j=0; j<leng; j++)
+{
+setValue(arguments[i][j], "NULL");
+}
+}
+}
+function HiddenMultiInstParaInit(arr, index)
+{
+var leng = arr.length;
+for(var i=0; i<leng; i++)
+{
+setValue(arr[i]+index, "NULL");
+}
+}
+function ChangeTagStatus(names)
+{
+var leng = arguments.length;
+var arrs, leng1, result;
+for(var i = 0; i < leng-1; i++)
+{
+var arrs = document.getElementsByTagName(arguments[i]);
+leng1 = arrs.length;
+for (var j = 0; j < leng1; j++)
+{
+if ("hidden" != arrs[j].type && "file" != arrs[j].type )
+{
+arrs[j].disabled = arguments[leng-1];
+}
+}
+}
+}
+function DisableALL()
+{
+ChangeTagStatus('input', 'select', true);
+}
+function EnableALL()
+{
+ChangeTagStatus('input', 'select', false);
+}
+function jslViewToPostCheckBox(PostId, ViewId)
+{
+var value = 0;
+if(getObj(PostId) != null && getObj(ViewId) != null )
+{
+if (getChecked(ViewId))
+{
+value = "1";
+}
+setValue(PostId,value);
+}
+}
+function jslPostToViewCheckBox(ViewId, PostId)
+{
+var value = false;
+if(getObj(PostId) != null && getObj(ViewId) != null )
+{
+if (getValue(PostId) == "1")
+{
+value = true;
+}
+setChecked(ViewId, value);
+}
+}
+function jslGetRadioValue(radioObject)
+{
+if (radioObject)
+{
+if (radioObject.length)
+{
+for (var i = 0; i < radioObject.length; i++)
+{
+if (radioObject[i].checked)
+{
+return radioObject[i].value;
+}
+}
+}
+else if (radioObject.checked)
+{
+return radioObject.value;
+}
+}
+return -1;
+}
+function jslSetRadioValue(radioObject, value)
+{
+if(radioObject)
+{
+if(radioObject.length)
+{
+for(var i=0;i<radioObject.length; i++)
+{
+if(radioObject[i].value == value)
+{
+radioObject[i].checked = true;
+return true;
+}
+}
+}
+else if (radioObject.value == value)
+{
+radioObject.checked = true;
+}
+}
+return false;
+}
+function jslDoShowComboBox(viewid,postid)
+{
+var i = 0;
+var selector = getObj(viewid);
+var value=getObj(postid).value;
+if(selector==null) return;
+for(; i < selector.length; i++)
+{
+if(selector.options[i].value == value)
+{
+selector.selectedIndex = i;
+return;
+}
+}
+selector.selectedIndex = -1;
+}
+function addSelectOption(id, val, txt)
+{
+var o = getObj(id);
+if (isValInSelect(val, id)==0)
+{
+var op = document.createElement('option');
+op.text = txt;
+op.value = val;
+try
+{
+o.add(op,null);
+}
+catch(ex)
+{
+o.add(op);
+}
+}
+}
+function getOptionIndexByValue(sid, val)
+{
+var sObj = getObj(sid);
+for ( var i=0; i<sObj.length; i++ )
+{
+if ( val == sObj.options[i].value )
+{
+return i;
+}
+}
+return -1;
+}
+function deleteSelectOption(id, val)
+{
+var o = getObj(id);
+var i = getOptionIndexByValue(id, val);
+if(i > -1)
+{
+o.remove(i);
+}
+}
+function deleteSelectOptions(selectID, keyWord)
+{
+var obj = getObj(selectID);
+for ( var i=0; i<obj.options.length; )
+{
+if ( obj.options[i].value.match(keyWord) != null )
+{
+obj.remove(i);
+}
+else
+{
+i++;
+}
+}
+}
+function clearSelect(id)
+{
+var o = getObj(id);
+while(o.options.length > 0)
+{
+o.remove(0);
+}
+}
+function isValInSelect(val, sid)
+{
+if(getOptionIndexByValue(sid, val) > -1)
+{
+return 1;
+}
+return 0;
+}
+function setSelOtherValue(obj, value, id)
+{
+var flag = 0;
+var mm = "";
+if(id == null)
+{
+mm = "";
+}
+else
+{
+mm = getValue(id);
+}
+if (("" == mm) || ("N/A" == mm) || (null == mm))
+{
+var num = obj.length;
+for (var i = num ;i > 0 ;i-- )
+{
+var name = obj.options[i-1].value;
+var text = obj.options[i-1].text;
+obj.options[i] = new Option(text, text);
+obj.options[i].value = name;
+}
+obj.options[0] = new Option(value,value);
+obj.options[0].value = value;
+obj.options[0].text = value;
+flag = 1;
+}
+return flag;
+}
+function colorizeInfoTbl(id)
+{
+var objTable = document.getElementById(id);
+var clasName;
+var colorFlg = true;
+if(objTable)
+{
+for(var i = 0; i < objTable.rows.length; i++)
+{
+if(objTable.rows[i].style.display != "none")
+{
+if(colorFlg)
+{
+clasName = "white_1";
+colorFlg = false;
+}
+else
+{
+clasName = "blue_1";
+colorFlg = true;
+}
+}
+objTable.rows[i].setAttribute("class", clasName);
+objTable.rows[i].setAttribute("className", clasName);
+}
+}
+}
+function RmZero(str)
+{
+while(str.indexOf("0") == 0 && str.length > 1)
+{
+str = str.substr(1);
+}
+return str;
+}
+function IpRmZero(IpAddrValue)
+{
+var addrParts = IpAddrValue.split('.');
+var leng = addrParts.length;
+for (var i = 0; i < leng; i++)
+{
+addrParts[i]=RmZero(addrParts[i]);
+}
+return addrParts.join(".");
+}
+function ReSetIpRmZero(ID)
+{
+var num = arguments.length;
+var re  = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+var obj;
+if(num == 0) return;
+for(i = 0;i < num; i++)
+{
+obj = getObj(arguments[i]);
+if((obj != null && obj.value != "" && obj.value != null )&&(re.test(obj.value) == true))
+{
+obj.value = IpRmZero(obj.value);
+}
+}
+}
+function ReSetValueRmZero(ID)
+{
+var num = arguments.length;
+var obj;
+for(i = 0;i < num; i++)
+{
+obj = getObj(arguments[i]);
+if(obj != null && obj.value != null && obj.value != "")
+{
+obj.value = RmZero(obj.value);
+}
+}
+}
+String.prototype.ReplaceAll = function(value)
+{
+return this.replace(/\s/g,value);
+}
+String.prototype.TrimLR = function()
+{
+return this.replace(/(^\s*)|(\s*$)/g, "");
+}
+String.prototype.LTrim = function()
+{
+return this.replace(/(^\s*)/g, "");
+}
+String.prototype.RTrim = function()
+{
+return this.replace(/(\s*$)/g, "");
+}
+function HtmlShowSpace(value,id)
+{
+getObj(id).innerHTML = value.ReplaceAll("&nbsp;");
+}
+function HtmlInputShowSpace(value,id)
+{
+getObj(id).value = value.ReplaceAll("&nbsp;");
+}
+function trimLSpaces(str){
+return str.LTrim();
+}
+function trimRSpaces(str){
+return str.RTrim();
+}
+function trimAllSpaces(str)
+{
+return str.ReplaceAll("");
+}
+function trimLRSpaces(str)
+{
+return str.TrimLR();
+}
+function setNULLToSepPort(Port, Val)
+{
+var portvalue=Port;
+if(portvalue=="")
+{
+portvalue = Val;
+}
+return portvalue;
+}
+function getSepPortToNULL(Port, Val)
+{
+var portvalue=Port;
+if(portvalue==Val)
+{
+portvalue="";
+}
+return portvalue;
+}
+function setNULLToPort(Port)
+{
+var portvalue=Port;
+if(portvalue=="")
+{
+portvalue = "-1";
+}
+return portvalue;
+}
+function getPortToNULL(Port)
+{
+var portvalue=Port;
+if(portvalue=="-1")
+{
+portvalue="";
+}
+return portvalue;
+}
+function setNULLToMAC(MAC)
+{
+var macaddr=MAC;
+if(macaddr=="")
+{
+macaddr="00:00:00:00:00:00";
+}
+return macaddr;
+}
+function getMACToNULL(MAC)
+{
+var macaddr=MAC;
+if(macaddr=="00:00:00:00:00:00")
+{
+macaddr="";
+}
+return macaddr;
+}
+function setNULLToIP(IP)
+{
+var ipvalue=IP;
+if(ipvalue=="")
+{
+ipvalue="0.0.0.0";
+}
+return ipvalue;
+}
+function getIPToNULL(IP)
+{
+var ipvalue=IP;
+if(ipvalue=="0.0.0.0")
+{
+ipvalue="";
+}
+return ipvalue;
+}
+function encode64(input)
+{
+var keyStr = "ABCDEFGHIJKLMNOP" + "QRSTUVWXYZabcdef" + "ghijklmnopqrstuv" + "wxyz0123456789+/" + "=";
+input = escape(input);
+var output = "";
+var chr1, chr2, chr3 = "";
+var enc1, enc2, enc3, enc4 = "";
+var i = 0;
+do {
+chr1 = input.charCodeAt(i++);
+chr2 = input.charCodeAt(i++);
+chr3 = input.charCodeAt(i++);
+enc1 = chr1 >> 2;
+enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+enc4 = chr3 & 63;
+if (isNaN(chr2))
+{
+enc3 = enc4 = 64;
+}
+else if (isNaN(chr3))
+{
+enc4 = 64;
+}
+output = output +
+keyStr.charAt(enc1) +
+keyStr.charAt(enc2) +
+keyStr.charAt(enc3) +
+keyStr.charAt(enc4);
+chr1 = chr2 = chr3 = "";
+enc1 = enc2 = enc3 = enc4 = "";
+} while (i < input.length);
+return output;
+}
+function decode64(input)
+{
+var output = "";
+var chr1, chr2, chr3 = "";
+var enc1, enc2, enc3, enc4 = "";
+var i = 0;
+var base64test = /[^A-Za-z0-9\+\/\=]/g;
+var keyStr = "ABCDEFGHIJKLMNOP" + "QRSTUVWXYZabcdef" + "ghijklmnopqrstuv" + "wxyz0123456789+/" + "=";
+if (base64test.exec(input)) {
+alert("There were invalid base64 characters in the input text.\n" +
+"Valid base64 characters are A-Z, a-z, 0-9, '+', '/', and '='\n" +
+"Expect errors in decoding.");
+}
+input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+do {
+enc1 = keyStr.indexOf(input.charAt(i++));
+enc2 = keyStr.indexOf(input.charAt(i++));
+enc3 = keyStr.indexOf(input.charAt(i++));
+enc4 = keyStr.indexOf(input.charAt(i++));
+chr1 = (enc1 << 2) | (enc2 >> 4);
+chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+chr3 = ((enc3 & 3) << 6) | enc4;
+output = output + String.fromCharCode(chr1);
+if (enc3 != 64) {
+output = output + String.fromCharCode(chr2);
+}
+if (enc4 != 64) {
+output = output + String.fromCharCode(chr3);
+}
+chr1 = chr2 = chr3 = "";
+enc1 = enc2 = enc3 = enc4 = "";
+} while (i < input.length);
+return unescape(output);
+}
+function fnBreakWordAll(o) {
+var o = o || {},
+iWord = o.word || 13,
+iRe = o.re || '[a-zA-Z0-9]',
+bAll = o.all || false,
+sClassName = o.className || 'word-break-all',
+aEls = o.els || ( function() {
+var aEls = [],
+aAllEls = document.getElementsByTagName( '*' ),
+re = new RegExp( '(?:^|\\s+)' + sClassName + '(?:\\s+|$)' );
+for ( var i = 0, iLen = aAllEls.length; i < iLen; ++i ) {
+if ( re.test( aAllEls[i].className ) ) {
+aEls[aEls.length] = aAllEls[i];
+}
+}
+return aEls;
+} )() || [],
+fnBreakWord = function( oEl ) {
+
+if( !oEl || oEl.nodeType !== 1 ) {
+return false;
+} else if ( oEl.currentStyle && typeof(oEl.currentStyle.wordWrap) === 'string' ) {
+breakWord = function( oEl ) {
+if (oEl.runtimeStyle)
+{
+oEl.runtimeStyle.wordWrap = 'break-word';
+}
+return true;
+};
+return breakWord( oEl );
+} else if ( document.createTreeWalker ) {
+var trim = function  ( str ) {
+str = str.replace( /^\s\s*/, '' );
+var ws = /\s/,
+i = str.length;
+while ( ws.test( str.charAt( --i ) ) );
+return str.slice(0, i + 1);
+};
+breakWord = function( oEl ) {
+var dWalker = document.createTreeWalker( oEl, NodeFilter.SHOW_TEXT, null, false );
+var node, s, c = String.fromCharCode( '8203' ),
+
+re = new RegExp( '(' + iRe + '{0,' + iWord + '})' );
+while ( dWalker.nextNode() ) {
+node = dWalker.currentNode;
+s = trim( node.nodeValue ).split( re ).join( c );
+node.nodeValue = s;
+}
+return true;
+};
+return breakWord( oEl );
+}
+};
+for( var i=0, n=aEls.length; i<n; ++i ) {
+var sUa = navigator.userAgent, sTn = aEls[i].tagName.toLowerCase();
+if ( ( /Opera/ ).test( sUa ) || ( /Firefox/ ).test( sUa ) || ( ( /KHTML/ ).test( sUa ) && ( sTn === 'td' || sTn === 'th') ) || bAll ) {
+fnBreakWord(aEls[i]);
+}
+}
+}
+function getInputtoHtml(id, value)
+{
+return ("<input type=\"text\" class=\"uiNoBorder\" value=\""
++ HTMLEnCode(value) + "\"  id=\"" + id + "\"  readonly>");
+}
+function getNameValue(id, value)
+{
+return ("<input type=\"text\" class=\"uiNoBorder\" value=\""
++ value + "\"  id=\"" + id + "\"  readonly>");
+}
+function getImage(src, strmethod, id)
+{
+var imageHTML = "<input type=\"button\" id=\""
++ id
++ "\" onclick=\""
++ strmethod
++ "\" class =\"multiImg\" "
++ "style=\"background:url(" + src + ");\">";
+return (imageHTML);
+}
+function showIsEnableImage(isEnable, cellId)
+{
+var strId = "";
+if("" != cellId)
+{
+strId = "id=" + cellId;
+}
+if("1" == isEnable)
+{
+return ("<input type=\"image\" src=\"img/enable.gif\" style=\"cursor:default\" " + strId + ">");
+}
+else
+{
+return ("<input type=\"image\" src=\"img/disable.gif\" style=\"cursor:default\" " + strId + ">");
+}
+}
+function getImagefrmClass(ImgClass, strmethod, id)
+{
+var imageHTML = "<input type=\"button\" id=\""
++ id
++ "\" onclick=\""
++ strmethod
++ "\" class =\""
++ ImgClass
++ "\" >";
+return (imageHTML);
+}
+function getXMLHTTPObj()
+{
+var xmlHttp = null;
+try
+{
+
+xmlHttp=new XMLHttpRequest();
+}
+catch (e)
+{
+try
+{
+xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+}
+catch (e)
+{
+try
+{
+xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+catch (e){}
+}
+}
+return xmlHttp;
+}
+var xmlHTTPStatus = new Array();
+xmlHTTPStatus['Uninitialized']  = 0;
+xmlHTTPStatus['Open']           = 1;
+xmlHTTPStatus['Sent']           = 2;
+xmlHTTPStatus['Receiving']      = 3;
+xmlHTTPStatus['Loaded']         = 4;
+function AJAXObj()
+{
+this.obj = getXMLHTTPObj();
+this.postStr = "";
+this.addPostItem = function(name, value)
+{
+this.postStr += name + "=" + value + "&";
+};
+this.post = function(requestURL, responseFunc)
+{
+this.obj.open("POST", requestURL, true);
+this.obj.onreadystatechange = responseFunc;
+this.obj.send(this.postStr);
+this.postStr = "";
+};
+this.getResponseText = function()
+{
+return this.obj.responseText;
+};
+this.getReadyState = function()
+{
+return this.obj.readyState;
+};
+this.getStatus = function()
+{
+return this.obj.status;
+};
+}
+function getXMLDoc(xmlStr)
+{
+var xmlDoc;
+try
+{
+xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+xmlDoc.async="false";
+xmlDoc.loadXML(xmlStr);
+return(xmlDoc);
+}
+catch(e)
+{
+try
+{
+parser=new DOMParser();
+xmlDoc=parser.parseFromString(xmlStr,"text/xml");
+return(xmlDoc);
+}
+catch(e)
+{
+}
+}
+return(null);
+}
+function getAJAXResponseXMLDoc(xmlStr)
+{
+if (xmlStr.match(/^\s*<ajax_response_xml_root>/m) != null)
+{
+return getXMLDoc(xmlStr);
+}
+return null;
+}
+function XMLDocObj(xmlStr)
+{
+this.xmlDoc = getAJAXResponseXMLDoc(xmlStr);
+this.getXMLNodeValue = function(nodeName)
+{
+var nodeValue = "";
+try
+{
+nodeValue = this.xmlDoc.getElementsByTagName(nodeName)[0].childNodes[0].nodeValue;
+}
+catch(e)
+{
+}
+return nodeValue;
+};
+this.getXMLNode = function(nodeName)
+{
+return this.xmlDoc.getElementsByTagName(nodeName)[0];
+};
+this.getCMAPIParaValue = function(OBJNAME, instID, paraName)
+{
+var paraValue = "";
+var instObj   = null;
+var o = this.getXMLNode(OBJNAME);
+var insts = o.childNodes;
+for (var i=0; i<insts.length; i++)
+{
+var attrs = insts[i].childNodes;
+for (var j=0; j<attrs.length; j++)
+{
+if (attrs[j].nodeName=="ID" && instID==attrs[j].childNodes[0].nodeValue)
+{
+instObj = insts[i];
+break;
+}
+}
+}
+if (null != instObj)
+{
+var attrs = instObj.childNodes;
+for (var j=0; j<attrs.length; j++)
+{
+if (attrs[j].nodeName == "Parameters")
+{
+var paras = attrs[j].childNodes;
+for (var k=0; k<paras.length; k++)
+{
+if (paras[k].nodeName == paraName)
+{
+try
+{
+paraValue = paras[k].childNodes[0].nodeValue;
+}
+catch(e)
+{
+}
+break;
+}
+}
+}
+}
+}
+return paraValue;
+};
+this.getMIIDListArr = function(OBJNAME)
+{
+var idListArr = new Array();
+var arrIndex = 0;
+var o = this.getXMLNode(OBJNAME);
+var insts = o.childNodes;
+for (var i=0; i<insts.length; i++)
+{
+var attrs = insts[i].childNodes;
+for (var j=0; j<attrs.length; j++)
+{
+if (attrs[j].nodeName=="ID")
+{
+idListArr[arrIndex++] = attrs[j].childNodes[0].nodeValue;
+}
+}
+}
+return idListArr;
+};
+}
+function appendHiddenInput(fid, id, value)
+{
+var o = getObj(fid);
+if (o != null)
+{
+var is = o.getElementsByTagName("input"); 
+var il = is.length;
+for (var i=0; i<il; i++)
+{
+var sid = is[i].id;
+if ( id == sid )
+{
+is[i].value = value;
+break;
+}
+}
+if ( i == il )
+{
+var i = document.createElement("input");
+i.type = "hidden";
+i.id = id;
+i.name = id;
+i.value = value;
+o.appendChild(i);
+}
+}
+}
+function deleteHiddenInput(fid, id)
+{
+var o = getObj(fid);
+var t = getObj(id);
+o.removeChild(t);
+}
+function clearfSubmit(fid)
+{
+var o = getObj(fid);
+var clds = o.childNodes;
+while (clds.length > 0)
+{
+o.removeChild(clds[0]);
+}
+}
+function checkSameInput(fid)
+{
+var o = getObj(fid);
+if (o != null)
+{
+var is = o.getElementByTagName("input");
+var il = is.length;
+for (var i=0; i<il-1; i++)
+{
+var sid = is[i].id;
+for (var j=i+1; j<il; j++)
+{
+if (sid == is[j].id)
+{
+alert(fid+" has Same Inputs, ID:"+sid);
+}
+}
+}
+}
+}
+function getCookie(c_name)
+{
+if (document.cookie.length>0)
+{
+var c_start=document.cookie.indexOf(c_name + "=");
+if ( -1 != c_start )
+{
+c_start = c_start + c_name.length + 1;
+var c_end=document.cookie.indexOf(";", c_start);
+if ( c_end == -1 )
+{
+c_end=document.cookie.length;
+}
+return unescape( document.cookie.substring(c_start, c_end) );
+}
+}
+return null;
+}
+function setCookie(c_name,value,expiredays)
+{
+var exdate = new Date();
+exdate.setDate( exdate.getDate() + expiredays );
+var cookieContent = c_name + "=" + escape(value);
+if ( null != expiredays )
+{
+cookieContent += "; expires=" + exdate.toGMTString();
+}
+document.cookie = cookieContent;
+}
+function HTMLEnCode(str)
+{
+str = str.replace(/&/g, "&amp;");
+str = str.replace(/</g, "&lt;");
+str = str.replace(/>/g, "&gt;");
+str = str.replace(/ /g, "&nbsp;");
+str = str.replace(/\"/g, "&quot;");
+return str;
+}
+function HTMLDeCode(str)
+{
+str = str.replace(/&lt;/g, "<");
+str = str.replace(/&gt;/g, ">");
+str = str.replace(/&nbsp;/g, " ");
+str = str.replace(/&quot;/g, "\"");
+str = str.replace(/&amp;/g, "&");
+return str;
+}
+function HTMLAddBr(str, wdth)
+{
+var str1 = "";
+for (var i=0; i<Math.ceil(str.length/wdth); i++)
+{
+str1 += HTMLEnCode( str.substr(i*wdth, wdth) );
+if ( Math.ceil(str.length/wdth) != i+1 )
+{
+str1 += "<br>";
+}
+}
+return str1;
+}
+function CheckLen(obj,val)
+{
+if (val.length == obj.maxLength)
+{
+var curIndex = obj.id.match(/\d+$/);
+var nextIndex = parseInt(curIndex, 10)+1;
+var nextID = obj.id.replace(/\d+$/,"")+nextIndex;
+if (getObj(nextID) == null)
+{
+return;
+}
+document.getElementById(nextID).focus();
+document.getElementById(nextID).select();
+}
+else if (val.length == 0)
+{
+var curIndex = obj.id.match(/\d+$/);
+var prevIndex = parseInt(curIndex, 10);
+if (prevIndex > 1)
+{
+prevIndex = prevIndex - 1;
+}
+var prevID = obj.id.replace(/\d+$/,"")+prevIndex;
+if (getObj(prevID) == null)
+{
+return;
+}
+document.getElementById(prevID).focus();
+document.getElementById(prevID).select();
+}
+else
+{
+return;
+}
+}
+function encode64_noescape(input)
+{
+var keyStr = "ABCDEFGHIJKLMNOP" + "QRSTUVWXYZabcdef" + "ghijklmnopqrstuv" + "wxyz0123456789+/" + "=";
+
+var output = "";
+var chr1, chr2, chr3 = "";
+var enc1, enc2, enc3, enc4 = "";
+var i = 0;
+do {
+chr1 = input.charCodeAt(i++);
+chr2 = input.charCodeAt(i++);
+chr3 = input.charCodeAt(i++);
+enc1 = chr1 >> 2;
+enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+enc4 = chr3 & 63;
+if (isNaN(chr2))
+{
+enc3 = enc4 = 64;
+}
+else if (isNaN(chr3))
+{
+enc4 = 64;
+}
+output = output +
+keyStr.charAt(enc1) +
+keyStr.charAt(enc2) +
+keyStr.charAt(enc3) +
+keyStr.charAt(enc4);
+chr1 = chr2 = chr3 = "";
+enc1 = enc2 = enc3 = enc4 = "";
+} while (i < input.length);
+return output;
+}
+function createHiddenInput(name,value)
+{
+var hiddenInput = document.createElement("input");
+hiddenInput.name=name;
+hiddenInput.value=value;
+hiddenInput.type="hidden";
+return hiddenInput;
+}
+function myTrim(str, chr)
+{
+var reg=new RegExp('((' + chr + ')*$)','g');
+return str.replace(reg,"");
+}
+function calcSubNet(ipaddr, netmask)
+{
+var ips = ipaddr.split(".");
+var ns  = netmask.split(".");
+var sub = "";
+if(ips.length != 4 || ns.length != 4)
+return "0.0.0.0";
+for(var i = 0; i < 4; i++)
+{
+sub += ips[i] & ns[i];
+sub += ".";
+}
+sub = myTrim(sub, ".");
+return sub;
+}
+function checkNull(value)
+{
+if(value == "" || value == null)
+return false;
+else
+return true;
+}
+function checkGenString(sz)
+{
+if(checkNull(sz) == false)
+return -1;
+if (sz.match("[^0-9a-zA-Z_-]") != null)
+return false;
+return true;
+}
+function checkGenStringForASC(value)
+{
+var length = value.length;
+for(var j = 0 ;j < length; j++)
+{
+var xx = value.charCodeAt(j);
+if(xx <=0 || xx > 255)
+{
+return false;
+}
+}
+return true;
+}
+function in_array(needle, haystack)
+{
+for(var key in haystack)
+{
+if(needle === haystack[key])
+{
+return true;
+}
+}
+return false;
+}
+function checkStrLengthRange(value, min, max)
+{
+if(checkNull(value) == false)
+{
+return -1;
+}
+var len = value.length;
+if((len < min) || (len > max))
+{
+return -3;
+}
+return true;
+}
+function checkInteger(str)
+{
+if(str.match("^[-]{0,1}[0-9]{1,}$"))
+return true;
+return false;
+}
+function checkIntegerRange(value, minValue, maxValue)
+{
+if(checkNull(value) == false)
+{
+return -1;
+}
+if(checkInteger(value) != true)
+return -2;
+if (value < minValue || value > maxValue)
+{
+return -3;
+}
+return true;
+}
+function checkIntegerRangeById(FrmId, minValue, maxValue)
+{
+ReSetValueRmZero(FrmId);
+var val = getValue(FrmId);
+return checkIntegerRange(val , minValue, maxValue);
+}
+function checkGenInt(str)
+{
+if(checkIntegerRange(str, -2147483648, 2147483647) != true)
+return false;
+return true;
+}
+function checkUnSingleInt(str)
+{
+if(checkIntegerRange(str, 0, 4294967295) != true)
+return false;
+return true;
+}
+function checkName(strName, iLeng)
+{
+var len       = strName.length;
+var firstChar = strName.substr(0,1);
+var lastChar  = strName.substr(len-1,1);
+var leftChar  = "";
+var rightChar = "";
+var iDotCount = 0;
+var i         = 0;
+var preDotPos = 0;
+var statu = checkStrLengthRange(strName, 1, iLeng);
+if(statu != true)
+{
+return statu;
+}
+if (strName.match("[^0-9a-zA-Z.-]") != null)
+{
+return false;
+}
+if(firstChar.match("[^0-9a-zA-Z]") != null)
+{
+return false;
+}
+if(lastChar.match("[^0-9a-zA-Z]") != null)
+{
+return false;
+}
+var pos = strName.lastIndexOf(".");
+if(pos == -1)
+{
+var str = strName;
+var len = strName.length;
+for(var i=0;i<len;i++)
+{
+var value = str.substring(i,i+1);
+if(isNaN(parseInt(value)))
+{
+return true;
+}
+}
+return false;
+}
+else
+{
+var str = strName.substr(pos+1);
+var len = strName.length - (pos + 1);
+for(var i=0;i<len;i++)
+{
+var value = str.substring(i,i+1);
+if(isNaN(parseInt(value)))
+{
+return true;
+}
+}
+return false;
+}
+return true;
+}
+function checkHostName(HostName)
+{
+return checkName(HostName, 256);
+}
+function checkDomainName(domain_name)
+{
+return checkName(domain_name, 64);
+}
+function checkEssid(value)
+{
+var statu = checkStrLengthRange(value, 1, 32);
+if(statu != true)
+{
+return statu;
+}
+var length = value.length;
+for(var j = 0; j < length; j++)
+{
+var xx = value.charCodeAt(j);
+
+if (xx < 32 || xx > 126)
+{
+return false;
+}
+}
+return true;
+}
+function checkURL(url)
+{
+var statu = checkStrLengthRange(url, 1, 256);
+if(statu != true)
+{
+return statu;
+}
+if (url.match("[^0-9a-zA-Z.:;,!@%#?_/&=+*'$()\\[\\]-]") != null)
+{
+return false;
+}
+return true;
+}
+function checkIpAddress(value, num)
+{
+var ipaddr = value;
+var re     = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+if(re.test(ipaddr) == true)
+{
+var parts = ipaddr.split(".");
+for(var i=0; i<parts.length; i++)
+{
+if(parts[i].indexOf("0") == 0 && parts[i].length > 1)
+return false;
+if (parseInt((parts[i]),10) > 255 || parseInt((parts[i]),10) < 0)
+{
+return false;
+}
+}
+if(num == 2)
+{
+if(parseInt(parts[0],10) == 0 || parseInt(parts[3],10)==0)
+{
+return false ;
+}
+if( parseInt(parts[0],10) == 255 || parseInt(parts[3],10)==255)
+{
+return false ;
+}
+if (parseInt(parts[0],10) > 223)
+return false ;
+}
+if(num == 3)
+{
+for(var i=0; i<parts.length; i++)
+{
+if (parseInt((parts[i]),10) == 0)
+break;
+}
+if(i == parts.length)
+{
+if ( (parseInt(parts[1],10) != 255)||
+(parseInt(parts[2],10) != 255)||
+(parseInt(parts[3],10) != 255))
+{
+return false;
+}
+}
+for(var j=i; j < parts.length; j++)
+{
+if (parseInt((parts[j]),10) != 0)
+{
+return false;
+}
+}
+}
+return true;
+}
+return false;
+}
+function checkIPV6Address(str)
+{
+if (str.match("[^0-9a-fA-F:.]") != null)
+return false;
+addrParts   = str.split(':');
+Doublecolon = str.split('::');
+ipv4Parts   = str.split('.');
+if(addrParts.length<3||addrParts.length>8)
+{
+return false;
+}
+else if(Doublecolon.length==1&&ipv4Parts.length==1&&addrParts.length!=8)
+{
+return false;
+}
+else if(Doublecolon.length==1&&ipv4Parts.length>1&&addrParts.length!=6)
+{
+return false;
+}
+else if(Doublecolon.length>1&&ipv4Parts.length>1&&addrParts.length>6)
+{
+return false;
+}
+else if(Doublecolon.length>2||str.split(':::').length>1)
+{
+return false;
+}
+else
+{
+if(addrParts[0]==""&&addrParts[1]!="")
+{
+return false;
+}
+for(var i=0;i<addrParts.length;i++)
+{
+if(i==addrParts.length-1&&addrParts[i]==""&&addrParts[i-1]!="")
+{
+return false;
+}
+if(addrParts[i].length>4 && addrParts[i].split('.').length<2)
+{
+return false;
+}
+}
+}
+var pos = str.lastIndexOf(":");
+var ipv4Parts = str.split('.');
+if(ipv4Parts.length>1)
+{
+var ipv4=str.substring(pos+1,str.length);
+if(true != checkIpAddress(ipv4,""))
+{
+return false;
+}
+}
+return true;
+}
+function checkGateway(Address)
+{
+var address = Address.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits;
+var i;
+if(address == null)
+{
+return false;
+}
+digits = address[0].split(".");
+if (digits.length != 4 )
+{
+return false;
+}
+for(i=0; i < 4; i++)
+{
+if( (Number(digits[i]) > 255 )||
+(Number(digits[i]) < 0 )  ||
+(Number(digits[0]) > 223))
+{
+return false;
+}
+}
+return true;
+}
+function checkMACAddress(Addr)
+{
+var pattern = /^\s*([A-Fa-f0-9]{2}\:){5}[A-Fa-f0-9]{2}\s*$/;
+if(Addr=="00:00:00:00:00:00")
+{
+return false;
+}
+if(!pattern.test(Addr))
+{
+return false;
+}
+return true;
+}
+function checkMaskAddress(MaskAddr)
+{
+var mask = MaskAddr.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+var digits;
+var bMask = 0;
+var watch = false;
+var i;
+var error=null;
+if(mask == null)
+{
+return false;
+}
+digits = mask[0].split(".");
+if (digits.length != 4 )
+{
+return false;
+}
+for(i=0; i < 4; i++)
+{
+if((Number(digits[i]) > 255 ) || (Number(digits[i]) < 0 ) ||
+(digits[i].indexOf("0") == 0 && digits[i].length > 1)
+)
+{
+return false;
+}
+bMask = (bMask << 8) | Number(digits[i]);
+}
+bMask = bMask & 0x0FFFFFFFF;
+if((bMask & 0x01) == 1)
+watch = true;
+for(i=0; i<32; i++)
+{
+if((watch == true) && ((bMask & 0x1)==0))
+{
+return false;
+}
+bMask = bMask >> 1;
+if((bMask & 0x01) == 1)
+watch=true;
+}
+return true;
+}
+function checkIPNet(ipaddr, netmask)
+{
+var ret = checkIpAddress(ipaddr);
+if(ret != true)
+return ret;
+if (netmask == null)
+return null;
+ret = checkMaskAddress(netmask);
+if(ret != null)
+return ret;
+var ips = ipaddr.split(".");
+var subnet = calcSubNet(ipaddr, netmask);
+var subs = subnet.split(".");
+var s = "";
+for(var i = 0; i < 4; i++)
+{
+s += parseInt(ips[i]) ^ parseInt(subs[i]);
+s += ".";
+}
+if (s == "0.0.0.0.")
+return true;
+return false;
+}
+function checkPort(port)
+{
+var value=port;
+if(port=="-1")
+return false;
+else
+return true;
+}
+function valIpMask(ipaddr, netmask)
+{
+var ss = netmask.split(".");
+var mac = 0;
+for(var i = 0; i < 4; i++)
+{
+mac = mac << 8;
+mac = mac + parseInt(ss[i]);
+}
+var ip = 0;
+var as=ipaddr.split(".");
+for(var i = 0; i < 4; i++)
+{
+ip = ip << 8;
+ip = ip + parseInt(as[i]);
+}
+if(mac && ((ip & mac) == ip))
+{
+return false;
+}
+if(mac && ((ip & (~mac)) == ~mac))
+{
+return false;
+}
+return true;
+}
+
+function moveErrLayer(left, top)
+{
+document.getElementById("myLayer").style.left = left + "px";
+document.getElementById("myLayer").style.top  = top  + "px";
+}
+function ShowNote(notetitle, msg)
+{
+document.getElementById("errnote").innerHTML = notetitle;
+document.getElementById("errmsg").innerHTML  = msg;
+document.getElementById("myLayer").style.visibility = "visible" ;
+}
+function ShowNoteNew(ctl, notetitle, msg)
+{
+document.getElementById("errnote").innerHTML = notetitle;
+document.getElementById("errmsg").innerHTML  = msg;
+document.getElementById("myLayer").style.visibility = "visible" ;
+if(ctl != null && ctl.disabled == false)
+{
+try
+{
+ctl.focus();
+}
+catch(e)
+{
+}
+}
+}
+function ShowNoteForCom(frmid, fntid, msg)
+{
+var fntmsg;
+var strmsg;
+if(document.getElementById(fntid) == null)
+{
+if(fntid == null)
+fntmsg = "";
+else
+fntmsg = fntid;
+}
+else
+{
+fntmsg = document.getElementById(fntid).innerHTML;
+}
+strmsg = fntmsg + msg;
+ShowNoteNew(document.getElementById(frmid), "Note", strmsg);
+}
+function ShowError(ctl, msg)
+{
+var tmpStr = g_errorInfo;
+if(tmpStr == "undefined")
+{
+tmpStr = "Error";
+}
+document.getElementById("errnote").innerHTML = tmpStr;
+document.getElementById("errmsg").innerHTML = msg;
+document.getElementById("myLayer").style.visibility = "visible" ;
+if(ctl != null && ctl.disabled == false)
+{
+try
+{
+ctl.focus();
+}
+catch(e)
+{
+}
+}
+}
+function ShowErrorForCom(frmid, fntid, msg)
+{
+var fntmsg;
+var strmsg;
+if(document.getElementById(fntid) == null)
+{
+if(fntid == null)
+fntmsg = "";
+else
+fntmsg = fntid;
+}else
+{
+fntmsg = document.getElementById(fntid).innerHTML;
+}
+strmsg = fntmsg + msg;
+ShowError(document.getElementById(frmid),strmsg );
+}
+function getMsgFormArray(str, arg)
+{
+var errid = 0;
+var min   = 0;
+var max   = 0;
+var param = -1;
+var msg   = "";
+var num = arg.length;
+if(num == 1)
+{
+errid = arg[0];
+}
+else
+if(num == 3)
+{
+errid = arg[0];
+min   = arg[1];
+max   = arg[2];
+}
+else
+if(num == 2)
+{
+errid = arg[0];
+param = arg[1];
+}
+else
+return null;
+for(var i = 0; i < str.length; i ++)
+{
+if(typeof(str[i]) == "undefined")
+{
+alert("Initializing array error, please check your code谩i = "+ i);
+return null;
+}
+if(errid == str[i][0])
+{
+if(min == max && min == 0)
+{
+if(param == -1)
+{
+msg = str[i][1];
+}
+else
+{
+msg = str[i][1] + param + str[i+1][1];
+}
+}
+else
+msg = str[i][1] + min + "~" + max + str[i+1][1];
+return msg;
+}
+}
+return null;
+}
+function getEvent(event) {
+var ev = event || window.event;
+if (!ev)
+{
+var c = this.getEvent.caller;
+while (c)
+{
+ev = c.arguments[0];
+if (ev &&
+(Event == ev.constructor || MouseEvent == ev.constructor))
+{
+break;
+}
+c = c.caller;
+}
+}
+return ev;
+}
+function setTextFocusEnd()
+{
+var evt = getEvent();
+if (evt.srcElement)
+{
+var elm = evt.srcElement;
+var textRange  = elm.createTextRange();
+textRange.moveStart('character', elm.value.length);
+textRange.collapse(true);
+textRange.select();
+}
+}
+function get_width(){
+return (document.body.clientWidth+document.body.scrollLeft);
+}
+function get_height(){
+return (document.body.clientHeight+document.body.scrollTop);
+}
+function get_left(w){
+var bw=document.body.clientWidth;
+w=parseFloat(w);
+return (bw/2-w/2+document.body.scrollLeft);
+}
+function get_top(h){
+var bh=document.body.clientHeight;
+h=parseFloat(h);
+return 100;
+}
+function create_mask(){
+var mask=document.createElement("div");
+mask.id="mask";
+mask.style.position="absolute";
+mask.style.filter="progid:DXImageTransform.Microsoft.Alpha(style=4,opacity=25)";
+mask.style.opacity=0.4;
+mask.style.zIndex=1000;
+document.body.appendChild(mask);
+re_mask();
+}
+function create_msgbox(w,h,t){
+var box=document.createElement("div");
+box.id="msgbox";
+box.style.position="absolute";
+
+box.style.width=w+"px";
+box.style.height=h+"px";
+
+box.style.overflow="visible";
+box.innerHTML=t;
+box.style.zIndex=1001;
+document.body.appendChild(box);
+re_pos();
+}
+function re_mask(){
+var mask=document.getElementById("mask");
+if(null==mask)return;
+mask.style.background="black";
+mask.style.top="0px";
+mask.style.left="0px";
+mask.style.width=get_width()+"px";
+mask.style.height=get_height()+"px";
+}
+function re_pos(){
+window.document.onkeydown=showKeyDown;
+var box=document.getElementById("msgbox");
+if(null!=box){
+var w=box.style.width;
+var h=box.style.height;
+
+box.style.left=get_left(w)+"px";
+
+box.style.top=get_top(h)+"px";
+}
+}
+function remove_msgbox(){
+var mask=document.getElementById("mask");
+var msgbox=document.getElementById("msgbox");
+if(null==mask&&null==msgbox)return;
+document.body.removeChild(mask);
+document.body.removeChild(msgbox);
+}
+function msgbox(msgJSONData){
+window.parent.scrollTo(0,0);
+create_mask();
+var temp="<table id=\"Tbl_msgbox\" cellpadding=\"0\" cellspacing=\"0\" class=\"msgtb\">";
+temp+="<tr><td width=\"355\" height=\"22\" class=\"msgtr1\" colspan=2>"+msgJSONData.title+"</td></tr>";
+temp+="<tr><td width=\"30\" height=\"75\" class=\"msgtr2\">&nbsp;<img src=\"img/infomsg.gif\">&nbsp;&nbsp;</td><td width=\"325\" class=\"msgtr2\"><font face=\"宋体\" size=\"2\">"+msgJSONData.content+"</font></td>";
+temp+="</tr><tr><td width=\"355\" height=\"22\" align=\"center\" class=\"msgtr3\" colspan=2><input name=\"msgconfirmb\" type=\"button\" class=\"msgbutton\" id=\"msgconfirmb\" value=\"" + msgJSONData.confirmLabel + "\" onclick=\"remove_msgbox();"+msgJSONData.confirmCallback+";\">";
+if("yes"==msgJSONData.cancelDisplay){temp+="&nbsp;&nbsp;<input name=\"msgcancelb\" type=\"button\" class=\"msgbutton\" id=\"msgcancelb\" value=\"" + msgJSONData.cancelLabel + "\" onclick=\"remove_msgbox();\"></td>";}
+temp+="</tr><tr><td class=\"msgtr4\" width=\"355\" height=\"8\" colspan=2></td></tr></table>";
+create_msgbox(400,200,temp);
+if(msgJSONData.focusButtun=="Confirm"){document.getElementById("msgconfirmb").focus();}
+else {document.getElementById("msgcancelb").focus();}
+}
+function showKeyDown(e)
+{
+e=(e)?e:window.event;
+
+var box=document.getElementById("msgbox");
+if(null!=box)
+{
+if(e.keyCode == 37)
+{
+document.getElementById("msgconfirmb").focus();
+}
+if(e.keyCode == 39)
+{
+document.getElementById("msgcancelb").focus();
+}
+}
+}
+function getURL()
+{
+var ret = "getpage.gch?pid=1002&nextpage=";
+var len = arguments.length;
+if ( 0 != (len-1)%2 )
+{
+ShowErrorForCom(null, null, "arguments len err of getURL!");
+return;
+}
+for (var i=0; i<len; i++)
+{
+if ( i%2 == 1 )
+{
+ret += "&" + arguments[i] + "=";
+}
+else
+{
+ret += arguments[i];
+}
+}
+return ret;
+}
+function menuURLGen()
+{
+for ( var supId in meta_menu )
+{
+meta_menu[supId]['URL'] = getURL(meta_menu[supId]['page']);
+for ( var midId in menu_items[supId] )
+{
+menu_items[supId][midId]['URL'] = getURL(menu_items[supId][midId]['page']);
+for ( var subId in menu_subitems[supId][midId] )
+{
+menu_subitems[supId][midId][subId]['URL'] = getURL(menu_subitems[supId][midId][subId]['page']);
+}
+}
+}
+}
+function menuURLGen_Top()
+{
+for ( var supId in meta_menu )
+{
+meta_menu[supId]['URL'] = getURL(meta_menu[supId]['page']);
+}
+}
+function menuDisp()
+{
+menuURLGen();
+menuUpdate();
+}
+function ReplaceDemo(ss)
+{
+var r, re;
+re = / /g;
+r = ss.replace(re, "&nbsp;");
+return r;
+}
+function openLink(pageurl)
+{
+var tag = getObj("IF_UPLOADING").value;
+if (tag == "1")
+{
+top.mainFrame.location.href = "#";
+}
+else
+{
+if(getObj("temClickURL").value == "")
+{
+getObj("temClickURL").value = pageurl;
+top.mainFrame.location.href = ReplaceDemo(pageurl);
+}
+else
+{
+if(getObj("temClickURL").value != pageurl)
+{
+getObj("temClickURL").value = pageurl;
+top.mainFrame.location.href = ReplaceDemo(pageurl);
+}
+else
+{
+top.mainFrame.location.href = "#";
+}
+}
+}
+}
+function getMidMenuStat(supId, midId)
+{
+var len = 0;
+for ( var i in menu_subitems[supId][midId] )
+{
+len++;
+}
+if ( 0 == len )
+{
+return "single";
+}
+for (var subId in menu_subitems[supId][midId] )
+{
+if ( selectPage == menu_subitems[supId][midId][subId]['page'] )
+{
+return "open";
+}
+}
+return "closed";
+}
+function isMetaMenuWithChild(supId)
+{
+var len = 0;
+for ( var i in menu_items[supId] )
+{
+len++;
+}
+if ( 0 == len )
+{
+return false;
+}
+return true;
+}
+function OnMenuItemClick(supId, midId)
+{
+selectPage  = menu_items[supId][midId]['page'];
+selectSupId = supId;
+menuUpdate();
+}
+
+function addEvent(element, type, handler)
+{
+if (element.addEventListener)
+{
+element.addEventListener(type, handler, false);
+}
+else
+{
+if (!handler.$$guid)
+{
+handler.$$guid = addEvent.guid++;
+}
+if (!element.events) element.events = {};
+var handlers = element.events[type];
+if (!handlers)
+{
+handlers = element.events[type] = {};
+if (element["on" + type]) {
+handlers[0] = element["on" + type];
+}
+}
+handlers[handler.$$guid] = handler;
+element["on" + type] = handleEvent;
+}
+};
+addEvent.guid = 1;
+function removeEvent(element, type, handler)
+{
+if (element.removeEventListener) {
+element.removeEventListener(type, handler, false);
+}
+else
+{
+if (element.events && element.events[type])
+{
+delete element.events[type][handler.$$guid];
+}
+}
+};
+function handleEvent(event) {
+var returnValue = true;
+event = event || fixEvent(((this.ownerDocument || this.document || this).parentWindow || window).event);
+var handlers = this.events[event.type];
+for (var i in handlers) {
+this.$$handleEvent = handlers[i];
+if (this.$$handleEvent(event) === false) {
+returnValue = false;
+}
+}
+return returnValue;
+};
+function fixEvent(event)
+{
+event.preventDefault = fixEvent.preventDefault;
+event.stopPropagation = fixEvent.stopPropagation;
+return event;
+};
+fixEvent.preventDefault = function() {
+this.returnValue = false;
+};
+fixEvent.stopPropagation = function() {
+this.cancelBubble = true;
+};
+
+timeid = setTimeout("relogin()", 300 * 1000 + 5000);
+function callbackfuncReset()
+{
+clearTimeout(timeid);
+timeid = setTimeout("relogin()", 300 * 1000 + 5000);
+}
+
+function relogin()
+{
+alert("Session timeout, please login again.");
+setValue("logout",1);
+document.flogout.submit();
+}
+
+function onClickLogout()
+{
+setValue("logout",1);
+document.flogout.submit();
+}
+function setenter(e)
+{
+e = window.event?window.event:e;
+if( e == "[object]")
+{
+if (event.keyCode == 13 && event.srcElement.type == "text")
+{
+event.keyCode = 9;
+}
+}
+}
+</script>
+</head>
+<!--增加iframe使错误提示框不臂槽被下拉菜蹬给遮盖-->
+<body id="htmlBody">
+<!-- myLayer 为错误弹出框 -->
+<div id="myLayer" onmousedown="setinner('hidden')">
+<iframe id="myiframe" style="position: absolute; width: 179px; height: 88px; border: 1px none #000000; z-index: -1; filter:alpha(opacity=0); -moz-opacity:0">
+</iframe>
+<div id="layer_err_title">
+<div style="position:relative; left:35px; top:8px;">
+<font class="note" id="errnote">聽Error</font>
+</div>
+</div>
+<div id="layer_err_content">
+<font id="errmsg" class="notecontent">聽</font>
+</div>
+</div>
+<!--help部分开始-->
+
+<div id="alertFram" align="center" style="position:absolute; width:314px; height:auto; z-index:999; left: 380px; top: 9px; font-size: 9pt; display:none;">
+<div style="width:220px; position: absolute;" align="left" id="dragAble" class="dragAble">
+<div id="helpTextWrapper" style="position: relative">
+<iframe id="helpiframe" style="position: absolute; width: 100%; display: block; border: 0px 0px; z-index: -1;"></iframe>
+<div>
+<table class="help_box" cellpadding="0" cellspacing="0">
+<tr align="center">
+<td class="help_title">
+<font align="left" color="#FFFFFF"><b>聽Help</b></font>
+</td>
+<td onclick="hideHelp();" class="help_close">
+</td>
+</tr>
+<tr>
+<td colspan="2" height="200px" width="220px" valign="top" align="left" class="word-break-all" style="padding:5px 0 0 10px;">
+Host Name is mapped with a IP Address, they can be configured by user to resolve DNS request.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<!--help铱分结束-->
+<div id="container">
+<!--content部分开始-->
+<div class="content" id="content">
+<!--一b二、三级菜蹬开始-->
+<div class="h1_new" id="menu0">
+</div>
+<!--一b二、三级菜蹬结束-->
+<!--内容开始-->
+<!--占诮条开始-->
+<form name="flogout" id="flogout" method="post" onsubmit="return false;" action="/" target="_top">
+<input type="hidden" name="logout" id="logout" value="">
+</form>
+<div class="title">
+<div class="title_left" id="title_path">
+</div>
+
+<div class="title_log">
+<a href="#" onclick="onClickLogout()">Logout</a>
+</div>
+</div>
+<!--占诮条结束-->
+<div id="div1">
+<table class="table" id="Tb_Tip" width="450px" border="0" style="display:none">
+<tr>
+<td class="td3_tip" colspan="2" id="Td_Tip"></td>
+</tr>
+</table>
+
+
+
+
+
+<form name="fSubmit" id="fSubmit" method="POST" action="">
+<input type="hidden" name="IF_ACTION" id="IF_ACTION" value="">
+<script language="javascript">Transfer_meaning('IF_ACTION','');</script>
+<input type="hidden" name="IF_ERRORSTR" id="IF_ERRORSTR" value="">
+<script language="javascript">Transfer_meaning('IF_ERRORSTR','SUCC');</script>
+<input type="hidden" name="IF_ERRORPARAM" id="IF_ERRORPARAM" value="">
+<script language="javascript">Transfer_meaning('IF_ERRORPARAM','SUCC');</script>
+<input type="hidden" name="IF_ERRORTYPE" id="IF_ERRORTYPE" value="">
+<script language="javascript">Transfer_meaning('IF_ERRORTYPE','\x2d1');</script>
+<input type="hidden" name="IF_INDEX" id="IF_INDEX" value="">
+<script language="javascript">Transfer_meaning('IF_INDEX','');</script>
+<input type="hidden" name="DHCP_INDEX" id="DHCP_INDEX" value="">
+<script language="javascript">Transfer_meaning('DHCP_INDEX','');</script>
+<input type="hidden" name="IPAddressdhcp0" id="IPAddressdhcp0" value="">
+<script language="javascript">Transfer_meaning('IPAddressdhcp0','192\x2e168\x2e1\x2e110');</script>
+<input type="hidden" name="HostNamedhcp0" id="HostNamedhcp0" value="">
+<script language="javascript">Transfer_meaning('HostNamedhcp0','winpc');</script>
+<input type="hidden" name="MacAddrdhcp0" id="MacAddrdhcp0" value="">
+<script language="javascript">Transfer_meaning('MacAddrdhcp0','30\x3a9c\x3a23\x3a03\x3aec\x3aa9');</script>
+<input type="hidden" name="LeaseTimedhcp0" id="LeaseTimedhcp0" value="">
+<script language="javascript">Transfer_meaning('LeaseTimedhcp0','0');</script>
+<input type="hidden" name="IPAddressdhcp1" id="IPAddressdhcp1" value="">
+<script language="javascript">Transfer_meaning('IPAddressdhcp1','192\x2e168\x2e1\x2e106');</script>
+<input type="hidden" name="HostNamedhcp1" id="HostNamedhcp1" value="">
+<script language="javascript">Transfer_meaning('HostNamedhcp1','SEC842519154453');</script>
+<input type="hidden" name="MacAddrdhcp1" id="MacAddrdhcp1" value="">
+<script language="javascript">Transfer_meaning('MacAddrdhcp1','84\x3a25\x3a19\x3a15\x3a44\x3a53');</script>
+<input type="hidden" name="LeaseTimedhcp1" id="LeaseTimedhcp1" value="">
+<script language="javascript">Transfer_meaning('LeaseTimedhcp1','0');</script>
+<input type="hidden" name="IPAddressdhcp2" id="IPAddressdhcp2" value="">
+<script language="javascript">Transfer_meaning('IPAddressdhcp2','192\x2e168\x2e1\x2e102');</script>
+<input type="hidden" name="HostNamedhcp2" id="HostNamedhcp2" value="">
+<script language="javascript">Transfer_meaning('HostNamedhcp2','op6');</script>
+<input type="hidden" name="MacAddrdhcp2" id="MacAddrdhcp2" value="">
+<script language="javascript">Transfer_meaning('MacAddrdhcp2','64\x3aa2\x3af9\x3a81\x3aa2\x3aed');</script>
+<input type="hidden" name="LeaseTimedhcp2" id="LeaseTimedhcp2" value="">
+<script language="javascript">Transfer_meaning('LeaseTimedhcp2','0');</script>
+<input type="hidden" name="DNSDHCP_ACTION" id="DNSDHCP_ACTION" value="">
+<script language="javascript">Transfer_meaning('DNSDHCP_ACTION','');</script>
+<input type="hidden" name="DNSDHCP_INSTNUM" id="DNSDHCP_INSTNUM" value="">
+<script language="javascript">Transfer_meaning('DNSDHCP_INSTNUM','3');</script>
+<input type="hidden" name="DNSDHCP_ERRORSTR" id="DNSDHCP_ERRORSTR" value="">
+<script language="javascript">Transfer_meaning('DNSDHCP_ERRORSTR','SUCC');</script>
+<input type="hidden" name="DNSDHCP_ERRORPARAM" id="DNSDHCP_ERRORPARAM" value="">
+<script language="javascript">Transfer_meaning('DNSDHCP_ERRORPARAM','SUCC');</script>
+<script language="javascript">Transfer_meaning('DNSDHCP_ERRORSTR','SUCC');</script>
+<script language="javascript">Transfer_meaning('DNSDHCP_ERRORPARAM','SUCC');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORTYPE','\x2d1');</script>
+<input type="hidden" name="HostName" id="HostName" value="">
+<script language="javascript">Transfer_meaning('HostName','');</script>
+<input type="hidden" name="IPAddress" id="IPAddress" value="">
+<script language="javascript">Transfer_meaning('IPAddress','');</script>
+<input type="hidden" name="HOST_ACTION" id="HOST_ACTION" value="">
+<script language="javascript">Transfer_meaning('HOST_ACTION','');</script>
+<input type="hidden" name="HOST_ERRORSTR" id="HOST_ERRORSTR" value="">
+<script language="javascript">Transfer_meaning('HOST_ERRORSTR','SUCC');</script>
+<input type="hidden" name="HOST_ERRORPARAM" id="HOST_ERRORPARAM" value="">
+<script language="javascript">Transfer_meaning('HOST_ERRORPARAM','SUCC');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORSTR','SUCC');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORPARAM','SUCC');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORTYPE','\x2d1');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORSTR','SUCC');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORPARAM','SUCC');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORTYPE','\x2d1');</script>
+<script language="javascript">Transfer_meaning('HOST_ERRORSTR','SUCC');</script>
+<script language="javascript">Transfer_meaning('HOST_ERRORPARAM','SUCC');</script>
+<script language="javascript">Transfer_meaning('IF_ERRORTYPE','\x2d1');</script>
+<input type="hidden" name="HOST_INSTNUM" id="HOST_INSTNUM" value="">
+<script language="javascript">Transfer_meaning('HOST_INSTNUM','0');</script>
+<input type="hidden" name="HOST_ERRORSTR" id="HOST_ERRORSTR" value="">
+<script language="javascript">Transfer_meaning('HOST_ERRORSTR','SUCC');</script>
+<input type="hidden" name="DNSDHCP_ERRORSTR" id="DNSDHCP_ERRORSTR" value="">
+<script language="javascript">Transfer_meaning('DNSDHCP_ERRORSTR','SUCC');</script>
+</form>
+<script language="javascript">
+var DNSHOST_PARA = new Array(
+"HostName",
+"IPAddress"
+);
+var DNSDHCP_PARA = new Array(
+"HostName",
+"IPAddress"
+);
+var index ="";
+function getmsg(id)
+{
+var str      = new Array();
+str[0]   = new Array(101, " cannot be empty, please input again.");
+str[1]   = new Array(106, " is error, please input legal Host Name.");
+str[2]   = new Array(108, " is error, please input legal IP Address.");
+str[3]   = new Array(118, "Current operation is ineffective, please check whether ");
+str[4]   = new Array(119, " is legal.");
+str[5]   = new Array(122, "Current operation is ineffective, please check configuration parameters.");
+str[6]   = new Array(127, "Data exceed available range, please reconfigure.");
+str[7]   = new Array(102, "'s length is error, please make the length of characters within ");
+str[8]   = new Array(103, ".");
+return getMsgFormArray(str, arguments);
+}
+function pageLoad(url)
+{
+getObj("fSubmit").action = url;
+moveErrLayer(580,50);
+var errstr1= getValue("HOST_ERRORSTR");
+var errpara1 = getValue("HOST_ERRORPARAM");
+OldProcessRet(errstr1, errpara1);
+var errstr2= getValue("DNSDHCP_ERRORSTR");
+var errpara2 = getValue("DNSDHCP_ERRORPARAM");
+OldProcessRet(errstr2, errpara2);
+showTable();
+}
+function getImageDisabled(src)
+{
+return ("<input type=\"image\" src=\""+src+"\" disabled>");
+}
+function getInput(value,len)
+{
+return ("<input class=\"uiNoBorder\"  type=\"text\"  width=\""+len+"px\" value=\""+HTMLEnCode(value)+"\" readonly>");
+}
+function addline(index)
+{
+
+var newline = getObj("DEVtable").insertRow(-1);
+newline.setAttribute("class", "white");
+newline.setAttribute("className", "white");
+for(var i = 0; i < DNSHOST_PARA.length ; i++)
+{
+if(DNSHOST_PARA[i] == "HostName")
+{
+newline.insertCell(-1).innerHTML =getInput(getValue(DNSHOST_PARA[i]+index),164);
+}
+else
+{
+newline.insertCell(-1).innerHTML =getInput(getValue(DNSHOST_PARA[i]+index),196);
+}
+}
+newline.insertCell(-1).innerHTML=getImagefrmClass("multiImg_modify", "Modify("+index+")", "Btn_Modify"+index);
+newline.insertCell(-1).innerHTML=getImagefrmClass("multiImg_delete", "Delete("+index+")", "Btn_Delete"+index);
+}
+function addlinedhcp(index)
+{
+
+var newline = getObj("DEVtable").insertRow(-1);
+newline.setAttribute("class", "white");
+newline.setAttribute("className", "white");
+for(var i = 0; i < DNSDHCP_PARA.length ; i++)
+{
+if(DNSDHCP_PARA[i] == "HostName")
+{
+newline.insertCell(-1).innerHTML = getInput(getValue(DNSDHCP_PARA[i]+"dhcp"+index),164);
+}
+else
+{
+newline.insertCell(-1).innerHTML = getInput(getValue(DNSDHCP_PARA[i]+"dhcp"+index),196);
+}
+}
+newline.insertCell(-1).innerHTML=getImagefrmClass("multiImg_modifydis", "Modify("+index+")","Btn_Modify"+index);
+newline.insertCell(-1).innerHTML=getImagefrmClass("multiImg_deletedis", "Delete("+index+")","Btn_Delete"+index);
+jslDisable("Btn_Delete" + index,"Btn_Modify" + index);
+}
+function NullCofig()
+{
+var newline = getObj("DEVtable").insertRow(-1);
+newline.setAttribute("class", "white");
+newline.setAttribute("className", "white");
+newline.setAttribute("align", "center");
+var objcell =  newline.insertCell(-1);
+objcell.colSpan = 4;
+objcell.innerHTML= "There is no data, please add one first.";
+}
+function showTable()
+{
+var num = getValue("HOST_INSTNUM");
+var numdhcp = getValue("DNSDHCP_INSTNUM");
+if (0 == numdhcp && 0 == num)
+{
+NullCofig();
+}
+else
+{
+for(var i = 0; i < numdhcp; i++)
+{
+addlinedhcp(i);
+}
+for(var i = 0; i < num; i++)
+{
+addline(i);
+}
+}
+}
+function pageGetValue(i)
+{
+jslSetValue("Frm_IPAddress", "IPAddress"+i);
+jslSetValue("Frm_HostName", "HostName"+i);
+}
+function pageSetValue()
+{
+HiddenParaInit(DNSHOST_PARA);
+jslSetValue("HostName", "Frm_HostName");
+jslSetValue("IPAddress", "Frm_IPAddress");
+}
+function pageCheckValue()
+{
+var msg  = "";
+var msg1 = "";
+var msg2 = "";
+var num  = checkName(getValue("Frm_HostName"), 255);
+if(-1 == num)
+{
+msg = getmsg(101);
+ShowErrorForCom("Frm_HostName","Fnt_HostName",msg);
+return false;
+}
+if (-3 == num)
+{
+msg = getmsg(102, 1, 255);
+ShowErrorForCom("Frm_HostName","Fnt_HostName",msg);
+return false;
+}
+if(num == false)
+{
+msg = getmsg(106);
+ShowErrorForCom("Frm_HostName", "Fnt_HostName", msg);
+return false;
+}
+if(checkNull(getValue("Frm_IPAddress")) == false)
+{
+msg = getmsg(101);
+ShowErrorForCom("Frm_IPAddress","Fnt_IPAddress",msg);
+return false;
+}
+if( ((checkIpAddress(getValue("Frm_IPAddress")) == false) || ("0.0.0.0" == getValue("Frm_IPAddress")))
+
+&& ((false == checkIPV6Address(getValue("Frm_IPAddress"))) || ("::" == getValue("Frm_IPAddress")))
+
+)
+{
+msg = getmsg(108);
+ShowErrorForCom("Frm_IPAddress", "Fnt_IPAddress", msg);
+return false;
+}
+return true;
+}
+function Add()
+{
+var number = getValue("HOST_INSTNUM");
+document.getElementById("Btn_Add").style.display="";
+document.getElementById("Btn_DoEdit").style.display="none";
+ReSetIpRmZero("Frm_IPAddress");
+if(pageCheckValue() == true)
+{
+for(var i = 0; i < number; i++)
+{
+try
+{
+jslDisable("Btn_Delete" + i,"Btn_Modify" + i);
+}
+catch(e){}
+}
+pageSetValue();
+setValue("IF_ACTION", "new");
+setValue("IF_INDEX", "-1");
+DisableALL();
+getObj("fSubmit").submit();
+}
+else
+{
+}
+}
+function Modify(i)
+{
+document.getElementById("Btn_Add").style.display="none";
+document.getElementById("Btn_DoEdit").style.display="";
+document.getElementById("back").style.display="";
+pageGetValue(i);
+index=i;
+}
+function ModifySubmit()
+{
+ReSetIpRmZero("Frm_IPAddress");
+var number = getValue("HOST_INSTNUM");
+if(pageCheckValue() == true)
+{
+for(var i = 0; i < number; i++)
+{
+try
+{
+jslDisable("Btn_Delete" + i,"Btn_Modify" + i);
+}
+catch(e){}
+}
+pageSetValue();
+setValue("IF_ACTION", "apply");
+setValue("IF_INDEX",index);
+DisableALL();
+getObj("fSubmit").submit();
+}
+else
+{
+}
+}
+function Delete(i)
+{
+var number = getValue("HOST_INSTNUM");
+setValue("IF_ACTION", "delete");
+setValue("IF_INDEX",i);
+DisableALL();
+getObj("fSubmit").submit();
+}
+function back4add()
+{
+var number = getValue("HOST_INSTNUM");
+DisableALL();
+getObj("fSubmit").submit();
+}
+</script>
+
+<table id="TestContent" class="table" width="450px" border="0">
+<tr>
+<td class="td1"><font id="Fnt_HostName">Host Name</font></td>
+<td class="td2">
+<input id="Frm_HostName" name="Frm_HostName" type="text" class="inputId" value="" size="15">
+</td>
+</tr>
+<tr>
+<td class="td1"><font id="Fnt_IPAddress">IP Address</font></td>
+<td class="td2"><input id="Frm_IPAddress" name="Frm_IPAddress" type="text" class="inputId8" value="" size="15"></td>
+</tr>
+<tr>
+<td class="td1"></td>
+<td class="td2">
+<input id="Btn_Add" name="Btn_Add" type="button" class="button2" value=" Add " onclick="Add()">
+<input id="Btn_DoEdit" name="Btn_DoEdit" type="button" class="button2" value=" Modify " onclick="ModifySubmit()" style="display:none">
+<input name="back" type="button" id="back" value="Cancel" class="button2" onclick="back4add()" style="display:none">
+</td>
+</tr>
+<tr>
+<td class="td1"></td>
+<td class="td2"></td>
+</tr>
+</table>
+<table id="TestContent12" class="item">
+<tr>
+<td>The items with disabled buttons are allocated from a DHCP server, which couldn't be operated.</td>
+</tr>
+</table>
+<table id="DEVtable" class="item" border="0" cellpadding="0" cellspacing="1" bgcolor="#979797">
+<tr class="h2_s title_1">
+<td width="164px">Host Name</td>
+<td width="196px">IP Address</td>
+<td width="45px">Modify</td>
+<td width="45px">Delete</td>
+</tr>
+</table>
+
+</div>
+<!--内容结束-->
+<div class="bottom_div" id="bottom">聽
+</div>
+</div>
+<!--content部分结束-->
+<!--bottom部分开始-->
+<div class="copyright"> 漏2008-2019 ZTE Corporation. All rights reserved.</div>
+<div class="bottom_line"></div>
+<div id="bottomx"></div>
+<!--bottom铱分结束-->
+<input type="hidden" id="IF_UPLOADING" name="IF_UPLOADING" value="N/A">
+<input type="hidden" id="temClickURL" name="temClickURL" value="">
+<script language="javascript">
+function pageCancel_gdpr()
+{
+setValue("IF_ACTION","");
+if(getObj("IF_ACTIONv6") != null)
+{
+setValue("IF_ACTIONv6","");
+}
+pageCancel();
+}
+
+var x,y,z,obj;
+var down=false;
+var browser=navigator.appName;
+var b_version=navigator.appVersion;
+var version=b_version.split(";");
+var trim_Version = "";
+if(null != version[1])
+{
+trim_Version=version[1].replace(/[ ]/g,"");
+}
+function setinner(type)
+{
+if(browser=="Microsoft Internet Explorer" && trim_Version=="MSIE6.0")
+{
+document.getElementById("myLayer").style.visibility = type;
+}
+else
+{
+document.getElementById("myLayer").style.visibility = type ;
+}
+}
+function setinnerHidden()
+{
+if(browser=="Microsoft Internet Explorer" && trim_Version=="MSIE6.0")
+{
+document.getElementById("myLayer").style.visibility = "hidden";
+}
+else
+{
+document.getElementById("myLayer").style.visibility = "hidden" ;
+}
+}
+function init()
+{
+if(browser=="Microsoft Internet Explorer" && trim_Version=="MSIE6.0")
+{
+obj=event.srcElement;
+obj.setCapture();
+z=obj.style.zIndex;
+obj.style.zIndex=100 ;
+x=event.offsetX;
+y=event.offsetY ;
+down=true;
+}
+}
+function moveit()
+{
+if(browser=="Microsoft Internet Explorer" && trim_Version=="MSIE6.0")
+{
+if(down&&event.srcElement==obj)
+{
+with(obj.style)
+{
+posLeft=document.body.scrollLeft+event.x-x;
+posTop=document.body.scrollTop+event.y-y;
+}
+}
+}
+}
+function stopdrag()
+{
+if(browser=="Microsoft Internet Explorer" && trim_Version=="MSIE6.0")
+{
+down=false;
+obj.style.zIndex=z ;
+obj.releaseCapture();
+}
+}
+
+function framedispalay(id)
+{
+if(browser=="Microsoft Internet Explorer" && trim_Version=="MSIE6.0")
+{
+}
+else
+{
+getObj(id).style.display="none";
+}
+}
+
+
+function hideHelp()
+{
+getObj("alertFram").style.display = "none";
+};
+var ie=document.all;
+var nn6=document.getElementById&&!document.all;
+var isdrag=false;
+var y,x;
+var oDragObj;
+function moveMouse(e)
+{
+if (isdrag)
+{
+oDragObj.style.top  =  (nn6 ? nTY + e.clientY - y : nTY + event.clientY - y)+"px";
+oDragObj.style.left  =  (nn6 ? nTX + e.clientX - x : nTX + event.clientX - x)+"px";
+return false;
+}
+}
+function initDrag2(o,s)
+{
+if (typeof(o) == "string") o = document.getElementById(o);
+o.orig_x = parseInt(o.style.left) - document.body.scrollLeft;
+o.orig_y = parseInt(o.style.top) - document.body.scrollTop;
+o.orig_index = o.style.zIndex;
+o.onmousedown = function(evt)
+{
+this.style.cursor = "move";
+
+var d=document;
+evt = evt || window.event;
+var x = evt.clientX+d.body.scrollLeft-o.offsetLeft;
+var y = evt.clientY+d.body.scrollTop-o.offsetTop;
+d.ondragstart = "return false;";
+d.onselectstart = "return false;";
+d.onselect = "document.selection.empty();";
+if(o.setCapture)
+o.setCapture();
+else if(window.captureEvents)
+window.captureEvents(Event.MOUSEMOVE|Event.MOUSEUP);
+d.onmousemove = function(evt)
+{
+evt = evt || window.event;
+o.style.left = evt.clientX+document.body.scrollLeft-x +"px";
+o.style.top = evt.clientY+document.body.scrollTop-y +"px";
+o.orig_x = parseInt(o.style.left) - document.body.scrollLeft;
+o.orig_y = parseInt(o.style.top) - document.body.scrollTop;
+};
+d.onmouseup = function()
+{
+if(o.releaseCapture)
+o.releaseCapture();
+else if(window.captureEvents)
+window.captureEvents(Event.MOUSEMOVE|Event.MOUSEUP);
+d.onmousemove = null;
+d.onmouseup = null;
+d.ondragstart = null;
+d.onselectstart = null;
+d.onselect = null;
+o.style.cursor = "normal";
+o.style.zIndex = o.orig_index;
+};
+};
+if (s)
+{
+var orig_scroll = window.onscroll?window.onscroll:function (){};
+window.onscroll = function ()
+{
+orig_scroll();
+o.style.left = o.orig_x + document.body.scrollLeft;
+o.style.top = o.orig_y + document.body.scrollTop;
+};
+}
+}
+function initDrag(e)
+{
+var oDragHandle = nn6 ? e.target : event.srcElement;
+var topElement = "HTML";
+if( oDragHandle.tagName )
+{
+
+while (oDragHandle.tagName != topElement && oDragHandle.className != "dragAble")
+{
+oDragHandle = nn6 ? oDragHandle.parentNode : oDragHandle.parentElement;
+}
+if (oDragHandle.className=="dragAble")
+{
+isdrag = true;
+oDragObj = oDragHandle;
+nTY = parseInt(oDragObj.style.top+0);
+y = nn6 ? e.clientY : event.clientY;
+nTX = parseInt(oDragObj.style.left+0);
+x = nn6 ? e.clientX : event.clientX;
+document.onmousemove=moveMouse;
+return false;
+}
+}
+}
+
+
+
+function showHelp()
+{
+
+getObj("alertFram").style.display = "block";
+var helpiframe = document.getElementById('helpiframe');
+helpiframe.setAttribute('height', document.getElementById('dragAble').scrollHeight);
+framedispalay("helpiframe");
+initDrag2('dragAble');
+}
+
+
+function jump()
+{
+top.location.href = "/";
+}
+
+function AutoRelogin(type)
+{
+var timeout;
+if ((type == "restart") || (type == "upgconfig"))
+{
+timeout = 3;
+}
+else if (type == "restore")
+{
+timeout = 3;
+}
+else if (type == "upgversion")
+{
+timeout = 5;
+}
+else
+{
+return;
+}
+setTimeout("jump()", timeout*60*1000+5000);
+}
+
+
+function OldProcessRet(errstr, errpara)
+{
+if("Current operation is ineffective, please check whether " == errstr && "SUCC" == errpara)
+{
+errstr = "FAIL";
+}
+ProcessRet(errstr, errpara);
+}
+function ProcessRet(errstr, errpara)
+{
+var errtype=getValue("IF_ERRORTYPE");
+if (errstr != "SUCC")
+{
+if(errpara != "SUCC")
+{
+var param = document.getElementById("Fnt_"+errpara);
+if ( param== null)
+{
+ShowErrorForCom(null, null, "Current operation is ineffective, please check configuration parameters.");
+}
+else
+{
+msg = "Current operation is ineffective, please check whether " + param.innerHTML + " is legal.";
+ShowErrorForCom("Frm_"+errpara, null, msg);
+}
+}
+else
+{
+if (errstr == "FAIL")
+{
+errstr = "Current operation is ineffective, please check configuration parameters.";
+}
+if ((errtype&1) == 1)
+{
+ShowNote("Notice", errstr);
+}
+else if((errtype&2) == 2)
+{
+ShowErrorForCom(null, null, errstr);
+}
+else if((errtype&4) == 4)
+{
+}
+else
+{
+ShowErrorForCom(null, null, errstr);
+}
+}
+}
+else
+{
+var retAction = getValue("IF_ACTION");
+if(retAction=="new" || retAction=="edit" || retAction=="apply")
+{
+if(getObj("Frm_SimulationType") == null && getObj("Frm_AtCommd") == null
+&& getObj("Scan_Table") == null)
+{
+if(getObj("Td_Tip") != null)
+{
+setHTML("Td_Tip", "Your data have been stored!");
+jslEnDisplay("Tb_Tip");
+setTimeout("gdprrefresh()", 3000);
+}
+}
+}
+}
+}
+function gdprrefresh()
+{
+jslDiDisplay("Tb_Tip");
+}
+
+
+
+text  = "<table class='bottom_table' border='0' cellpadding='0' cellspacing='0'>"
++"<tbody><tr>"
++"<td class='bottom_td1'></td>"
++"<td class='bottom_td2'></td>"
++"<td class='bottom_td3'>"
+
++"</td></tr></tbody>"
++"</table>";
+getObj("bottom").innerHTML=text;
+meta_menu = new Array();
+menu_items = new Array();
+menu_subitems = new Array();
+meta_menu['mmStatu'] = new Array();
+meta_menu['mmStatu']['langName'] = 'Status';
+menu_items['mmStatu'] = new Array();
+menu_subitems['mmStatu'] = new Array();
+meta_menu['mmStatu']['page'] = 'status_dev_info_t.gch';
+meta_menu['mmStatu']['URL'] = 'getpage.gch?pid=1002&nextpage=status_dev_info_t.gch';
+menu_items['mmStatu']['smDevStatu'] = new Array();
+menu_items['mmStatu']['smDevStatu']['langName'] = 'Device Information ';
+menu_items['mmStatu']['smDevStatu']['page'] = 'status_dev_info_t.gch';
+menu_items['mmStatu']['smDevStatu']['URL'] =                         'getpage.gch?pid=1002&nextpage=status_dev_info_t.gch';
+menu_items['mmStatu']['smWanStatu'] = new Array();
+menu_items['mmStatu']['smWanStatu']['langName'] = 'Network Interface';
+menu_subitems['mmStatu']['smWanStatu'] = new Array();
+menu_items['mmStatu']['smWanStatu']['page'] = 'IPv46_status_wan_if_t.gch';
+menu_items['mmStatu']['smWanStatu']['URL'] =                             'getpage.gch?pid=1002&nextpage=IPv46_status_wan_if_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmDSLWANv46Conn'] = new Array();
+menu_subitems['mmStatu']['smWanStatu']['ssmDSLWANv46Conn']['langName'] = 'WAN Connection';
+menu_subitems['mmStatu']['smWanStatu']['ssmDSLWANv46Conn']['page'] = 'IPv46_status_wan_if_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmDSLWANv46Conn']['URL'] = 'getpage.gch?pid=1002&nextpage=IPv46_status_wan_if_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmTTYWANConn'] = new Array();
+menu_subitems['mmStatu']['smWanStatu']['ssmTTYWANConn']['langName'] = '3G/4G WAN Connection';
+menu_subitems['mmStatu']['smWanStatu']['ssmTTYWANConn']['page'] = 'status_ttywan_info_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmTTYWANConn']['URL'] = 'getpage.gch?pid=1002&nextpage=status_ttywan_info_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmJazztelLinkState'] = new Array();
+menu_subitems['mmStatu']['smWanStatu']['ssmJazztelLinkState']['langName'] = 'PON Status';
+menu_subitems['mmStatu']['smWanStatu']['ssmJazztelLinkState']['page'] = 'jazztel_status_link_info_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmJazztelLinkState']['URL'] = 'getpage.gch?pid=1002&nextpage=jazztel_status_link_info_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmMobNet'] = new Array();
+menu_subitems['mmStatu']['smWanStatu']['ssmMobNet']['langName'] = 'Mobile Network';
+menu_subitems['mmStatu']['smWanStatu']['ssmMobNet']['page'] = 'status_mobnet_info_t.gch';
+menu_subitems['mmStatu']['smWanStatu']['ssmMobNet']['URL'] = 'getpage.gch?pid=1002&nextpage=status_mobnet_info_t.gch';
+menu_items['mmStatu']['smLanStatu'] = new Array();
+menu_items['mmStatu']['smLanStatu']['langName'] = 'User Interface';
+menu_subitems['mmStatu']['smLanStatu'] = new Array();
+menu_items['mmStatu']['smLanStatu']['page'] = 'status_wlanm_info1_t.gch';
+menu_items['mmStatu']['smLanStatu']['URL'] =                             'getpage.gch?pid=1002&nextpage=status_wlanm_info1_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANONE'] = new Array();
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANONE']['langName'] = 'WLAN Radio2.4G(Online)';
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANONE']['page'] = 'status_wlanm_info1_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANONE']['URL'] = 'getpage.gch?pid=1002&nextpage=status_wlanm_info1_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANTWO'] = new Array();
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANTWO']['langName'] = 'WLAN Radio5G(Online)';
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANTWO']['page'] = 'status_wlanm_info2_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmWLANTWO']['URL'] = 'getpage.gch?pid=1002&nextpage=status_wlanm_info2_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmLAN'] = new Array();
+menu_subitems['mmStatu']['smLanStatu']['ssmLAN']['langName'] = 'Ethernet';
+menu_subitems['mmStatu']['smLanStatu']['ssmLAN']['page'] = 'pon_status_lan_info_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmLAN']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_status_lan_info_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmUSB'] = new Array();
+menu_subitems['mmStatu']['smLanStatu']['ssmUSB']['langName'] = 'USB';
+menu_subitems['mmStatu']['smLanStatu']['ssmUSB']['page'] = 'status_usb_info_t.gch';
+menu_subitems['mmStatu']['smLanStatu']['ssmUSB']['URL'] = 'getpage.gch?pid=1002&nextpage=status_usb_info_t.gch';
+menu_items['mmStatu']['smVOIPStatu'] = new Array();
+menu_items['mmStatu']['smVOIPStatu']['langName'] = 'VoIP Status';
+menu_items['mmStatu']['smVOIPStatu']['page'] = 'status_voip_4less_t.gch';
+menu_items['mmStatu']['smVOIPStatu']['URL'] =                         'getpage.gch?pid=1002&nextpage=status_voip_4less_t.gch';
+meta_menu['mmNet'] = new Array();
+meta_menu['mmNet']['langName'] = 'Network';
+menu_items['mmNet'] = new Array();
+menu_subitems['mmNet'] = new Array();
+meta_menu['mmNet']['page'] = 'jazztel_net_wlan_wpsweb_t.gch';
+meta_menu['mmNet']['URL'] = 'getpage.gch?pid=1002&nextpage=jazztel_net_wlan_wpsweb_t.gch';
+menu_items['mmNet']['smWLANComm'] = new Array();
+menu_items['mmNet']['smWLANComm']['langName'] = 'WLAN Common Setting';
+menu_subitems['mmNet']['smWLANComm'] = new Array();
+menu_items['mmNet']['smWLANComm']['page'] = 'jazztel_net_wlan_wpsweb_t.gch';
+menu_items['mmNet']['smWLANComm']['URL'] =                             'getpage.gch?pid=1002&nextpage=jazztel_net_wlan_wpsweb_t.gch';
+menu_subitems['mmNet']['smWLANComm']['ssmWLANWPS'] = new Array();
+menu_subitems['mmNet']['smWLANComm']['ssmWLANWPS']['langName'] = 'WPS PBC';
+menu_subitems['mmNet']['smWLANComm']['ssmWLANWPS']['page'] = 'jazztel_net_wlan_wpsweb_t.gch';
+menu_subitems['mmNet']['smWLANComm']['ssmWLANWPS']['URL'] = 'getpage.gch?pid=1002&nextpage=jazztel_net_wlan_wpsweb_t.gch';
+menu_subitems['mmNet']['smWLANComm']['ssmWLANSmartWifi'] = new Array();
+menu_subitems['mmNet']['smWLANComm']['ssmWLANSmartWifi']['langName'] = 'Smart WiFi';
+menu_subitems['mmNet']['smWLANComm']['ssmWLANSmartWifi']['page'] = 'jazztel_net_wlan_smartwifi_t.gch';
+menu_subitems['mmNet']['smWLANComm']['ssmWLANSmartWifi']['URL'] = 'getpage.gch?pid=1002&nextpage=jazztel_net_wlan_smartwifi_t.gch';
+menu_items['mmNet']['smWLANONE'] = new Array();
+menu_items['mmNet']['smWLANONE']['langName'] = 'WLAN Radio2.4G(Online)';
+menu_subitems['mmNet']['smWLANONE'] = new Array();
+menu_items['mmNet']['smWLANONE']['page'] = 'net_wlanm_conf1_t.gch';
+menu_items['mmNet']['smWLANONE']['URL'] =                             'getpage.gch?pid=1002&nextpage=net_wlanm_conf1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANBasic1'] = new Array();
+menu_subitems['mmNet']['smWLANONE']['ssmWLANBasic1']['langName'] = 'Basic';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANBasic1']['page'] = 'net_wlanm_conf1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANBasic1']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_conf1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANMul1'] = new Array();
+menu_subitems['mmNet']['smWLANONE']['ssmWLANMul1']['langName'] = 'SSID Settings';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANMul1']['page'] = 'net_wlanm_essid1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANMul1']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_essid1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSec1'] = new Array();
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSec1']['langName'] = 'Security';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSec1']['page'] = 'net_wlanm_secrity1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSec1']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_secrity1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmVlanSet1'] = new Array();
+menu_subitems['mmNet']['smWLANONE']['ssmVlanSet1']['langName'] = 'VLAN Settings';
+menu_subitems['mmNet']['smWLANONE']['ssmVlanSet1']['page'] = 'net_wlanm_vlan1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmVlanSet1']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_vlan1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmMacFilter1'] = new Array();
+menu_subitems['mmNet']['smWLANONE']['ssmMacFilter1']['langName'] = 'Access Control List';
+menu_subitems['mmNet']['smWLANONE']['ssmMacFilter1']['page'] = 'net_wlanm_macfilter1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmMacFilter1']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_macfilter1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANAss1'] = new Array();
+menu_subitems['mmNet']['smWLANONE']['ssmWLANAss1']['langName'] = 'Associated Devices';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANAss1']['page'] = 'net_wlanm_assoc1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANAss1']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_assoc1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSCAN1'] = new Array();
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSCAN1']['langName'] = 'Surrounding WiFi';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSCAN1']['page'] = 'net_wlan_scan1_t.gch';
+menu_subitems['mmNet']['smWLANONE']['ssmWLANSCAN1']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlan_scan1_t.gch';
+menu_items['mmNet']['smWLANTWO'] = new Array();
+menu_items['mmNet']['smWLANTWO']['langName'] = 'WLAN Radio5G(Online)';
+menu_subitems['mmNet']['smWLANTWO'] = new Array();
+menu_items['mmNet']['smWLANTWO']['page'] = 'net_wlanm_conf2_t.gch';
+menu_items['mmNet']['smWLANTWO']['URL'] =                             'getpage.gch?pid=1002&nextpage=net_wlanm_conf2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANBasic2'] = new Array();
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANBasic2']['langName'] = 'Basic';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANBasic2']['page'] = 'net_wlanm_conf2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANBasic2']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_conf2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANMul2'] = new Array();
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANMul2']['langName'] = 'SSID Settings';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANMul2']['page'] = 'net_wlanm_essid2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANMul2']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_essid2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSec2'] = new Array();
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSec2']['langName'] = 'Security';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSec2']['page'] = 'net_wlanm_secrity2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSec2']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_secrity2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmMacFilter2'] = new Array();
+menu_subitems['mmNet']['smWLANTWO']['ssmMacFilter2']['langName'] = 'Access Control List';
+menu_subitems['mmNet']['smWLANTWO']['ssmMacFilter2']['page'] = 'net_wlanm_macfilter2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmMacFilter2']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_macfilter2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANAss2'] = new Array();
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANAss2']['langName'] = 'Associated Devices';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANAss2']['page'] = 'net_wlanm_assoc2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANAss2']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlanm_assoc2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSCAN2'] = new Array();
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSCAN2']['langName'] = 'Surrounding WiFi';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSCAN2']['page'] = 'net_wlan_scan2_t.gch';
+menu_subitems['mmNet']['smWLANTWO']['ssmWLANSCAN2']['URL'] = 'getpage.gch?pid=1002&nextpage=net_wlan_scan2_t.gch';
+menu_items['mmNet']['smAddMgr'] = new Array();
+menu_items['mmNet']['smAddMgr']['langName'] = 'LAN';
+menu_subitems['mmNet']['smAddMgr'] = new Array();
+menu_items['mmNet']['smAddMgr']['page'] = 'net_dhcp_dynamic_t.gch';
+menu_items['mmNet']['smAddMgr']['URL'] =                             'getpage.gch?pid=1002&nextpage=net_dhcp_dynamic_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer'] = new Array();
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer']['langName'] = 'DHCP Server';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer']['page'] = 'net_dhcp_dynamic_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer']['URL'] = 'getpage.gch?pid=1002&nextpage=net_dhcp_dynamic_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPV6Ser'] = new Array();
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPV6Ser']['langName'] = 'DHCP Server(IPv6)';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPV6Ser']['page'] = 'net_v6_dhcp_dynamic_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPV6Ser']['URL'] = 'getpage.gch?pid=1002&nextpage=net_v6_dhcp_dynamic_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPBind'] = new Array();
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPBind']['langName'] = 'DHCP Binding';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPBind']['page'] = 'net_dhcp_static_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPBind']['URL'] = 'getpage.gch?pid=1002&nextpage=net_dhcp_static_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPPort'] = new Array();
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPPort']['langName'] = 'DHCP Port Service';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPPort']['page'] = 'net_dhcp_bindonport_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmDHCPPort']['URL'] = 'getpage.gch?pid=1002&nextpage=net_dhcp_bindonport_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixManagement'] = new Array();
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixManagement']['langName'] = 'Prefix Management';
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixManagement']['page'] = 'net_v6_prefix_management_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixManagement']['URL'] = 'getpage.gch?pid=1002&nextpage=net_v6_prefix_management_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixBanPort'] = new Array();
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixBanPort']['langName'] = 'DHCP Port Service(IPv6)';
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixBanPort']['page'] = 'net_v6_prefix_ban_port_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmPrefixBanPort']['URL'] = 'getpage.gch?pid=1002&nextpage=net_v6_prefix_ban_port_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmRAServer'] = new Array();
+menu_subitems['mmNet']['smAddMgr']['ssmRAServer']['langName'] = 'RA Service';
+menu_subitems['mmNet']['smAddMgr']['ssmRAServer']['page'] = 'net_v6_ra_server_t.gch';
+menu_subitems['mmNet']['smAddMgr']['ssmRAServer']['URL'] = 'getpage.gch?pid=1002&nextpage=net_v6_ra_server_t.gch';
+meta_menu['mmSec'] = new Array();
+meta_menu['mmSec']['langName'] = 'Security';
+menu_items['mmSec'] = new Array();
+menu_subitems['mmSec'] = new Array();
+meta_menu['mmSec']['page'] = 'sec_firewall_conf_t.gch';
+meta_menu['mmSec']['URL'] = 'getpage.gch?pid=1002&nextpage=sec_firewall_conf_t.gch';
+menu_items['mmSec']['smFirewall'] = new Array();
+menu_items['mmSec']['smFirewall']['langName'] = 'Firewall';
+menu_items['mmSec']['smFirewall']['page'] = 'sec_firewall_conf_t.gch';
+menu_items['mmSec']['smFirewall']['URL'] =                         'getpage.gch?pid=1002&nextpage=sec_firewall_conf_t.gch';
+menu_items['mmSec']['smIPv6Filter'] = new Array();
+menu_items['mmSec']['smIPv6Filter']['langName'] = 'IP Filter(IPv6)';
+menu_items['mmSec']['smIPv6Filter']['page'] = 'sec_portfilter6_conf_t.gch';
+menu_items['mmSec']['smIPv6Filter']['URL'] =                         'getpage.gch?pid=1002&nextpage=sec_portfilter6_conf_t.gch';
+menu_items['mmSec']['smMACFilter'] = new Array();
+menu_items['mmSec']['smMACFilter']['langName'] = 'MAC Filter';
+menu_items['mmSec']['smMACFilter']['page'] = 'sec_macfilter_conf_t.gch';
+menu_items['mmSec']['smMACFilter']['URL'] =                         'getpage.gch?pid=1002&nextpage=sec_macfilter_conf_t.gch';
+menu_items['mmSec']['smPCtrl'] = new Array();
+menu_items['mmSec']['smPCtrl']['langName'] = 'Parental Control';
+menu_subitems['mmSec']['smPCtrl'] = new Array();
+menu_items['mmSec']['smPCtrl']['page'] = 'sec_pctrl_user_t.gch';
+menu_items['mmSec']['smPCtrl']['URL'] =                             'getpage.gch?pid=1002&nextpage=sec_pctrl_user_t.gch';
+menu_subitems['mmSec']['smPCtrl']['ssmUserInfo'] = new Array();
+menu_subitems['mmSec']['smPCtrl']['ssmUserInfo']['langName'] = 'User Information';
+menu_subitems['mmSec']['smPCtrl']['ssmUserInfo']['page'] = 'sec_pctrl_user_t.gch';
+menu_subitems['mmSec']['smPCtrl']['ssmUserInfo']['URL'] = 'getpage.gch?pid=1002&nextpage=sec_pctrl_user_t.gch';
+menu_subitems['mmSec']['smPCtrl']['ssmURLFilter'] = new Array();
+menu_subitems['mmSec']['smPCtrl']['ssmURLFilter']['langName'] = 'URL Filter';
+menu_subitems['mmSec']['smPCtrl']['ssmURLFilter']['page'] = 'sec_url_filter_new_t.gch';
+menu_subitems['mmSec']['smPCtrl']['ssmURLFilter']['URL'] = 'getpage.gch?pid=1002&nextpage=sec_url_filter_new_t.gch';
+menu_subitems['mmSec']['smPCtrl']['ssmIPFilter'] = new Array();
+menu_subitems['mmSec']['smPCtrl']['ssmIPFilter']['langName'] = 'Port Filter';
+menu_subitems['mmSec']['smPCtrl']['ssmIPFilter']['page'] = 'sec_portfilter_conf_new_t.gch';
+menu_subitems['mmSec']['smPCtrl']['ssmIPFilter']['URL'] = 'getpage.gch?pid=1002&nextpage=sec_portfilter_conf_new_t.gch';
+menu_items['mmSec']['smFwAlg'] = new Array();
+menu_items['mmSec']['smFwAlg']['langName'] = 'ALG';
+menu_items['mmSec']['smFwAlg']['page'] = 'sec_fw_alg_t.gch';
+menu_items['mmSec']['smFwAlg']['URL'] =                         'getpage.gch?pid=1002&nextpage=sec_fw_alg_t.gch';
+meta_menu['mmApp'] = new Array();
+meta_menu['mmApp']['langName'] = 'Application';
+menu_items['mmApp'] = new Array();
+menu_subitems['mmApp'] = new Array();
+meta_menu['mmApp']['page'] = 'app_voip_sipadv_t.gch';
+meta_menu['mmApp']['URL'] = 'getpage.gch?pid=1002&nextpage=app_voip_sipadv_t.gch';
+menu_items['mmApp']['smVoIP'] = new Array();
+menu_items['mmApp']['smVoIP']['langName'] = 'VoIP';
+menu_subitems['mmApp']['smVoIP'] = new Array();
+menu_items['mmApp']['smVoIP']['page'] = 'app_voip_sipadv_t.gch';
+menu_items['mmApp']['smVoIP']['URL'] =                             'getpage.gch?pid=1002&nextpage=app_voip_sipadv_t.gch';
+menu_subitems['mmApp']['smVoIP']['ssmAdvanced'] = new Array();
+menu_subitems['mmApp']['smVoIP']['ssmAdvanced']['langName'] = 'Advanced';
+menu_subitems['mmApp']['smVoIP']['ssmAdvanced']['page'] = 'app_voip_sipadv_t.gch';
+menu_subitems['mmApp']['smVoIP']['ssmAdvanced']['URL'] = 'getpage.gch?pid=1002&nextpage=app_voip_sipadv_t.gch';
+menu_items['mmApp']['smDDNS'] = new Array();
+menu_items['mmApp']['smDDNS']['langName'] = 'DDNS';
+menu_items['mmApp']['smDDNS']['page'] = 'app_ddns_conf_jazztel_t.gch';
+menu_items['mmApp']['smDDNS']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_ddns_conf_jazztel_t.gch';
+menu_items['mmApp']['smDMZHost'] = new Array();
+menu_items['mmApp']['smDMZHost']['langName'] = 'DMZ Host';
+menu_items['mmApp']['smDMZHost']['page'] = 'app_dmz_conf_t.gch';
+menu_items['mmApp']['smDMZHost']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_dmz_conf_t.gch';
+menu_items['mmApp']['smUPnP'] = new Array();
+menu_items['mmApp']['smUPnP']['langName'] = 'UPnP';
+menu_items['mmApp']['smUPnP']['page'] = 'app_upnp_conf_t.gch';
+menu_items['mmApp']['smUPnP']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_upnp_conf_t.gch';
+menu_items['mmApp']['smpMap'] = new Array();
+menu_items['mmApp']['smpMap']['langName'] = 'UPnP Port Mapping';
+menu_items['mmApp']['smpMap']['page'] = 'app_portmap_conf_t.gch';
+menu_items['mmApp']['smpMap']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_portmap_conf_t.gch';
+menu_items['mmApp']['smPForward'] = new Array();
+menu_items['mmApp']['smPForward']['langName'] = 'Port Forwarding';
+menu_items['mmApp']['smPForward']['page'] = 'app_virtual_conf_t.gch';
+menu_items['mmApp']['smPForward']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_virtual_conf_t.gch';
+menu_items['mmApp']['smDNSSer'] = new Array();
+menu_items['mmApp']['smDNSSer']['langName'] = 'DNS Service';
+menu_subitems['mmApp']['smDNSSer'] = new Array();
+menu_items['mmApp']['smDNSSer']['page'] = 'app_dev_domain_t.gch';
+menu_items['mmApp']['smDNSSer']['URL'] =                             'getpage.gch?pid=1002&nextpage=app_dev_domain_t.gch';
+menu_subitems['mmApp']['smDNSSer']['ssmDomain'] = new Array();
+menu_subitems['mmApp']['smDNSSer']['ssmDomain']['langName'] = 'Domain Name';
+menu_subitems['mmApp']['smDNSSer']['ssmDomain']['page'] = 'app_dev_domain_t.gch';
+menu_subitems['mmApp']['smDNSSer']['ssmDomain']['URL'] = 'getpage.gch?pid=1002&nextpage=app_dev_domain_t.gch';
+menu_subitems['mmApp']['smDNSSer']['ssmHosts'] = new Array();
+menu_subitems['mmApp']['smDNSSer']['ssmHosts']['langName'] = 'Hosts';
+menu_subitems['mmApp']['smDNSSer']['ssmHosts']['page'] = 'app_dev_name_t.gch';
+menu_subitems['mmApp']['smDNSSer']['ssmHosts']['URL'] = 'getpage.gch?pid=1002&nextpage=app_dev_name_t.gch';
+menu_subitems['mmApp']['smDNSSer']['ssmDNS'] = new Array();
+menu_subitems['mmApp']['smDNSSer']['ssmDNS']['langName'] = 'DNS';
+menu_subitems['mmApp']['smDNSSer']['ssmDNS']['page'] = 'app_dev_dns_t.gch';
+menu_subitems['mmApp']['smDNSSer']['ssmDNS']['URL'] = 'getpage.gch?pid=1002&nextpage=app_dev_dns_t.gch';
+menu_items['mmApp']['smSNTP'] = new Array();
+menu_items['mmApp']['smSNTP']['langName'] = 'SNTP';
+menu_items['mmApp']['smSNTP']['page'] = 'net_sntp_conf_t.gch';
+menu_items['mmApp']['smSNTP']['URL'] =                         'getpage.gch?pid=1002&nextpage=net_sntp_conf_t.gch';
+menu_items['mmApp']['smMultiCast'] = new Array();
+menu_items['mmApp']['smMultiCast']['langName'] = 'IGMP';
+menu_subitems['mmApp']['smMultiCast'] = new Array();
+menu_items['mmApp']['smMultiCast']['page'] = 'app_igmp_conf_t.gch';
+menu_items['mmApp']['smMultiCast']['URL'] =                             'getpage.gch?pid=1002&nextpage=app_igmp_conf_t.gch';
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPProxy'] = new Array();
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPProxy']['langName'] = 'WAN Connection';
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPProxy']['page'] = 'app_igmp_conf_t.gch';
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPProxy']['URL'] = 'getpage.gch?pid=1002&nextpage=app_igmp_conf_t.gch';
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop'] = new Array();
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop']['langName'] = 'Basic Configuration';
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop']['page'] = 'app_igmp_mode_t.gch';
+menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop']['URL'] = 'getpage.gch?pid=1002&nextpage=app_igmp_mode_t.gch';
+menu_items['mmApp']['smUSBStor'] = new Array();
+menu_items['mmApp']['smUSBStor']['langName'] = 'USB Storage';
+menu_items['mmApp']['smUSBStor']['page'] = 'app_usb_conf_t.gch';
+menu_items['mmApp']['smUSBStor']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_usb_conf_t.gch';
+menu_items['mmApp']['smDms'] = new Array();
+menu_items['mmApp']['smDms']['langName'] = 'DMS / DLNA';
+menu_items['mmApp']['smDms']['page'] = 'app_dms_t.gch';
+menu_items['mmApp']['smDms']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_dms_t.gch';
+menu_items['mmApp']['smFTPApp'] = new Array();
+menu_items['mmApp']['smFTPApp']['langName'] = 'FTP Application';
+menu_items['mmApp']['smFTPApp']['page'] = 'app_ftp_client_t.gch';
+menu_items['mmApp']['smFTPApp']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_ftp_client_t.gch';
+menu_items['mmApp']['smFWPT'] = new Array();
+menu_items['mmApp']['smFWPT']['langName'] = 'Port Trigger';
+menu_items['mmApp']['smFWPT']['page'] = 'app_fw_pt_t.gch';
+menu_items['mmApp']['smFWPT']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_fw_pt_t.gch';
+menu_items['mmApp']['smPFAPPList'] = new Array();
+menu_items['mmApp']['smPFAPPList']['langName'] = 'Port Forwarding ( Application List )';
+menu_items['mmApp']['smPFAPPList']['page'] = 'app_pfapplist_conf_t.gch';
+menu_items['mmApp']['smPFAPPList']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_pfapplist_conf_t.gch';
+menu_items['mmApp']['smAPPList'] = new Array();
+menu_items['mmApp']['smAPPList']['langName'] = 'Application List';
+menu_items['mmApp']['smAPPList']['page'] = 'app_application_list_conf_t.gch';
+menu_items['mmApp']['smAPPList']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_application_list_conf_t.gch';
+menu_items['mmApp']['smTEST'] = new Array();
+menu_items['mmApp']['smTEST']['langName'] = 'FTP Test';
+menu_items['mmApp']['smTEST']['page'] = 'app_test_ftp_t.gch';
+menu_items['mmApp']['smTEST']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_test_ftp_t.gch';
+menu_items['mmApp']['smSamba'] = new Array();
+menu_items['mmApp']['smSamba']['langName'] = 'Samba Service';
+menu_items['mmApp']['smSamba']['page'] = 'app_samba_cfg_t.gch';
+menu_items['mmApp']['smSamba']['URL'] =                         'getpage.gch?pid=1002&nextpage=app_samba_cfg_t.gch';
+meta_menu['mmManager'] = new Array();
+meta_menu['mmManager']['langName'] = 'Administration';
+menu_items['mmManager'] = new Array();
+menu_subitems['mmManager'] = new Array();
+meta_menu['mmManager']['page'] = 'manager_aduser_conf_t.gch';
+meta_menu['mmManager']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_aduser_conf_t.gch';
+menu_items['mmManager']['smAdUserMgr'] = new Array();
+menu_items['mmManager']['smAdUserMgr']['langName'] = 'User Management';
+menu_items['mmManager']['smAdUserMgr']['page'] = 'manager_aduser_conf_t.gch';
+menu_items['mmManager']['smAdUserMgr']['URL'] =                         'getpage.gch?pid=1002&nextpage=manager_aduser_conf_t.gch';
+menu_items['mmManager']['smSysMgr'] = new Array();
+menu_items['mmManager']['smSysMgr']['langName'] = 'System Management';
+menu_subitems['mmManager']['smSysMgr'] = new Array();
+menu_items['mmManager']['smSysMgr']['page'] = 'manager_dev_conf_t.gch';
+menu_items['mmManager']['smSysMgr']['URL'] =                             'getpage.gch?pid=1002&nextpage=manager_dev_conf_t.gch';
+menu_subitems['mmManager']['smSysMgr']['ssmSysMgr'] = new Array();
+menu_subitems['mmManager']['smSysMgr']['ssmSysMgr']['langName'] = 'System Management';
+menu_subitems['mmManager']['smSysMgr']['ssmSysMgr']['page'] = 'manager_dev_conf_t.gch';
+menu_subitems['mmManager']['smSysMgr']['ssmSysMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_conf_t.gch';
+menu_subitems['mmManager']['smSysMgr']['ssmConfMgr'] = new Array();
+menu_subitems['mmManager']['smSysMgr']['ssmConfMgr']['langName'] = 'User Configuration Management';
+menu_subitems['mmManager']['smSysMgr']['ssmConfMgr']['page'] = 'manager_dev_config_t.gch';
+menu_subitems['mmManager']['smSysMgr']['ssmConfMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_config_t.gch';
+menu_items['mmManager']['smDiag'] = new Array();
+menu_items['mmManager']['smDiag']['langName'] = 'Diagnosis';
+menu_subitems['mmManager']['smDiag'] = new Array();
+menu_items['mmManager']['smDiag']['page'] = 'manager_dev_ping_t.gch';
+menu_items['mmManager']['smDiag']['URL'] =                             'getpage.gch?pid=1002&nextpage=manager_dev_ping_t.gch';
+menu_subitems['mmManager']['smDiag']['ssmPingDiag'] = new Array();
+menu_subitems['mmManager']['smDiag']['ssmPingDiag']['langName'] = 'Ping Diagnosis';
+menu_subitems['mmManager']['smDiag']['ssmPingDiag']['page'] = 'manager_dev_ping_t.gch';
+menu_subitems['mmManager']['smDiag']['ssmPingDiag']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_ping_t.gch';
+menu_subitems['mmManager']['smDiag']['ssmTraceRoute'] = new Array();
+menu_subitems['mmManager']['smDiag']['ssmTraceRoute']['langName'] = 'Trace Route Diagnosis';
+menu_subitems['mmManager']['smDiag']['ssmTraceRoute']['page'] = 'manager_trace_route_t.gch';
+menu_subitems['mmManager']['smDiag']['ssmTraceRoute']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_trace_route_t.gch';
+menu_items['mmManager']['sm3gCtr'] = new Array();
+menu_items['mmManager']['sm3gCtr']['langName'] = '3G/4G Basic Configuration';
+menu_items['mmManager']['sm3gCtr']['page'] = 'pon_manager_3g_t.gch';
+menu_items['mmManager']['sm3gCtr']['URL'] =                         'getpage.gch?pid=1002&nextpage=pon_manager_3g_t.gch';
+meta_menu['mmHelp'] = new Array();
+meta_menu['mmHelp']['langName'] = 'Help';
+menu_items['mmHelp'] = new Array();
+menu_subitems['mmHelp'] = new Array();
+meta_menu['mmHelp']['page'] = 'help_t.gch';
+meta_menu['mmHelp']['URL'] = 'getpage.gch?pid=1002&nextpage=help_t.gch';
+menu_items['mmHelp']['smHelp'] = new Array();
+menu_items['mmHelp']['smHelp']['langName'] = 'Help';
+menu_items['mmHelp']['smHelp']['page'] = 'help_t.gch';
+menu_items['mmHelp']['smHelp']['URL'] =                         'getpage.gch?pid=1002&nextpage=help_t.gch';
+
+var selectPage  = "app\x5fdev\x5fname\x5ft\x2egch";
+var selectSupId = "mmApp";
+function menuUpdate()
+{
+text = "<table class='menu' border='0' cellpadding='0' cellspacing='0'>"
++ "<tbody>"
++ "<tr>"
++ "<td class='h1_mid'><a name='top'></a>"
++ "<table class='menu_table' border='0' cellpadding='0' cellspacing='0'>"
++ "<tbody>";
+for (var supId in meta_menu)
+{
+text += "<tr class='";
+if( supId != selectSupId )
+{
+text += "h1";
+}
+else
+{
+text += "h1_s";
+}
+text += "' style='cursor:pointer' onclick=\"javascript:openLink('"
++ meta_menu[supId]['URL']
++ "')\" onmouseover=\"altMenuClass(this,true)\" "
++ "onmouseout=\"altMenuClass(this,false)\">"
++ "<td class='add'>&nbsp;</td>"
++ "<td class='mid' id='"+supId+"'>";
+if ( true == isMetaMenuWithChild(supId) )
+{
+if ( supId == selectSupId  )
+{
+text += "<span class='menuMinusSymbol'>-</span>";
+}
+else
+{
+text += "<span class='menuPlusSymbol'>+</span>";
+}
+}
+else
+{
+if ( meta_menu[supId]['page'] == selectPage )
+{
+getObj("title_path").innerHTML = "Path:"
++ meta_menu[supId]['langName'];
+}
+}
+text += "<font id='Fnt_"+supId+"'>"
++ meta_menu[supId]['langName']
++ "</font></td>"
++ "</tr>";
+if( supId != selectSupId )
+{
+continue;
+}
+for ( var midId in menu_items[supId] )
+{
+var stat = getMidMenuStat(supId, midId);
+if ( stat == "single" )
+{
+if (menu_items[supId][midId]['page'] == selectPage)
+{
+text = text
++ "<tr class='h2_s' onmouseover=\"altMenuClass(this,true)\" onmouseout=\"altMenuClass(this,false)\">"
++ "<td class='add'>&nbsp;</td>"
++ "<td class='mid'>"
++ "<font id='"+midId+"'>"
++ menu_items[supId][midId]['langName']
++ "</font></td>"
++ "</tr>";
+getObj("title_path").innerHTML="Path:"+meta_menu[supId]['langName']+"-"+menu_items[supId][midId]['langName'];
+}
+else
+{
+text = text
++ "<tr class='h2_content' style='cursor:pointer'  onclick='javascript:openLink(\"" + menu_items[supId][midId]['URL'] + "\")' onmouseover=\"altMenuClass(this,true)\" onmouseout=\"altMenuClass(this,false)\">"
++ "<td class='add'>&nbsp;</td>"
++ "<td class='mid'>"
++ "<font id='"+midId+"'>"
++ menu_items[supId][midId]['langName']
++ "</font></td>"
++ "</tr>";
+}
+}
+else if ( stat == "closed" )
+{
+text = text
++ "<tr class='h2_content' style='cursor:pointer' onclick='javascript:OnMenuItemClick(\"" + supId + "\",\"" + midId + "\"); openLink(\""
++ menu_items[supId][midId]['URL'] + "\")' onmouseover=\"altMenuClass(this,true)\" onmouseout=\"altMenuClass(this,false)\">"
++ "<td class='add'>&nbsp;</td>"
++ "<td class='mid'>"
++ "<span class='menuPlusSymbol'>+</span>"
++ "<font id='"+midId+"'>"
++ menu_items[supId][midId]['langName']
++ "</font></td>"
++ "</tr>";
+}
+else if ( stat == "open" )
+{
+text = text
++ "<tr class='h2_s' onmouseover=\"altMenuClass(this,true)\" onmouseout=\"altMenuClass(this,false)\">"
++ "<td class='add'>&nbsp;</td>"
++ "<td class='mid'>"
++ "<span class='menuMinusSymbol'>-</span>"
++ "<font id='"+midId+"'>"
++ menu_items[supId][midId]['langName']
++ "</font></td>"
++ "</tr>";
+for (var subId in menu_subitems[supId][midId])
+{
+if (menu_subitems[supId][midId][subId]['page'] == selectPage)
+{
+text = text
++ "<tr class='h3_s' onmouseover=\"altMenuClass(this,true)\" onmouseout=\"altMenuClass(this,false)\">"
++ "<td class='add'>&nbsp;</td>"
++ "<td class='mid'>"
++ "<font id='"+subId+"'>"
++ menu_subitems[supId][midId][subId]['langName']
++ "</font></td>"
++ "</tr>";
+getObj("title_path").innerHTML="Path:"+meta_menu[supId]['langName']+"-"+menu_items[supId][midId]['langName']+"-"+menu_subitems[supId][midId][subId]['langName'];
+}
+else
+{
+text = text
++ "<tr class='h3' style='cursor:pointer' onclick=\"javascript:openLink('" + menu_subitems[supId][midId][subId]['URL'] + "' )\" onmouseover=\"altMenuClass(this,true)\" onmouseout=\"altMenuClass(this,false)\">"
++ "<td class='add'>&nbsp;</td>"
++ "<td class='mid' colspan='2'>"
++ "<font id='"+subId+"'>"
++ menu_subitems[supId][midId][subId]['langName']
++ "</font></td>"
++ "</tr>";
+}
+}
+}
+}
+}
+
+text = text
++ "<tr class='h2_space'>"
++ "<td colspan='3'></td>"
++ "</tr>"
++ "<tr class='h2_help'>"
++ "<td class='add'></td>"
++ "<td class='mid_right'>"
++ "<div>"
++ "<ul>"
++ "<li class='help'>"
++ "<div class='help_img' onclick='showHelp();' ></div>"
++ "</li>"
++ "</ul>"
++ "</div>"
++ "</td>"
++ "</tr>";
+
+text = text
++ "</tbody>"
++ "</table>"
++ "</td>"
++ "</tr>"
++ "</tbody>"
++ "</table>";
+getObj("menu0").innerHTML=text;
+}
+function altMenuClass(ele)
+{
+var map = {"h1":"h1 bghover","h1 bghover":"h1","h1_s":"h1_s bghover h1_s_bgfix","h1_s bghover h1_s_bgfix":"h1_s","h2":"h2 bghover","h2 bghover":"h2","h2_s":"h2_s bghover","h2_s bghover":"h2_s","h2_content":"h2_content bghover","h2_content bghover":"h2_content","h3":"h3 bghover","h3 bghover":"h3","h3_s":"h3_s bghover","h3_s bghover":"h3_s"};
+ele.className = map[ele.className] || ele.className;
+}
+function myOnLoad()
+{
+menuDisp();
+addEvent(getObj("htmlBody"), "keydown", setenter);
+addEvent(getObj("htmlBody"), "keyup", setinnerHidden);
+addEvent(getObj("htmlBody"), "mousedown", setinnerHidden);
+fnBreakWordAll({word:15,re:'[\\w]'});
+framedispalay('myiframe');
+
+getObj("myLayer").style.left = "580px";
+getObj("myLayer").style.top  = "59px";
+
+pageLoad(getURL("app\x5fdev\x5fname\x5ft\x2egch"));
+
+}
+function setWindowScrollTop(win, e, nowHelpTag, lastHelpTag)
+{
+topHeight = getTop(e);
+if(win.document.documentElement)
+{
+win.document.documentElement.scrollTop = topHeight;
+}
+if(win.document.body){
+win.document.body.scrollTop = topHeight;
+}
+changeHelpColor(nowHelpTag, lastHelpTag);
+}
+function getTop(e)
+{
+var offset=e.offsetTop;
+if(e.offsetParent!=null)
+{
+offset+=getTop(e.offsetParent);
+}
+return offset;
+}
+function changeHelpColor(nowHelpTag, lastHelpTag)
+{
+if(nowHelpTag != lastHelpTag)
+{
+if(nowHelpTag == "gotop")
+{
+cancleColor(lastHelpTag);
+}
+else
+{
+cancleColor(lastHelpTag);
+confirmColor(nowHelpTag);
+}
+}
+else
+{
+confirmColor(nowHelpTag);
+}
+}
+function nextnode(node)
+{
+if(node.nodeType == 1)
+{
+return node;
+}
+if(node.nextSibling)
+{
+return nextnode(node.nextSibling);
+}
+}
+function fathernode(node)
+{
+if(node.nodeType == 1)
+{
+return node;
+}
+if(node.parentnode)
+{
+return fathernode(node.parentnode);
+}
+}
+function confirmColor(nowHelpTag)
+{
+var parentnodea = fathernode(document.getElementsByName(nowHelpTag)[0].parentNode);
+var helpTitle = fathernode(parentnodea.parentNode);
+helpTitle.bgColor="#B4E639";
+var helpText = nextnode(helpTitle.nextSibling);
+helpText.bgColor="#FFFFCC";
+getObj("helpTagValue").value = nowHelpTag;
+}
+function cancleColor(lastHelpTag)
+{
+if(lastHelpTag != "")
+{
+var parentnodea = fathernode(document.getElementsByName(lastHelpTag)[0].parentNode);
+var helpTitle = fathernode(parentnodea.parentNode);
+helpTitle.bgColor="";
+var helpText = nextnode(helpTitle.nextSibling);
+helpText.bgColor="";
+}
+}
+
+
+function addToken2AllForms()
+{
+function doAddLogic()
+{
+var session_token = "5042186968568912";
+var forms = document.getElementsByTagName("form");
+for ( var i=0; i<forms.length; i++ )
+{
+var tempform = forms[i];
+var sEnctype = tempform.getAttribute("enctype");
+if ( sEnctype != null &&
+"multipart/form-data" == sEnctype.toLowerCase() )
+{
+continue;
+}
+var tokenInput = document.createElement("input");
+tokenInput.setAttribute("id", "_SESSION_TOKEN");
+tokenInput.setAttribute("name", "_SESSION_TOKEN");
+tokenInput.setAttribute("type", "hidden");
+tokenInput.setAttribute("value", session_token);
+tempform.appendChild(tokenInput);
+}
+}
+if( window.onload == null )
+{
+window.onload=function(){
+doAddLogic();
+myOnLoad();
+}
+}
+else
+{
+var tempfunction = window.onload;
+window.onload=function(){
+tempfunction();
+doAddLogic();
+myOnLoad();
+}
+}
+}
+addToken2AllForms();
+</script>
+</div>
+</body>
+</html>
