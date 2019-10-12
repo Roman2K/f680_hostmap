@@ -1,0 +1,23 @@
+router:
+  url: "http://192.168.1.1"
+  credentials: {include: config.credentials.yml}
+dhcp:
+  range:
+    start: "192.168.1.2"
+    end: "192.168.1.100"
+  binding:
+    winpc:
+      mac: "30:9c:23:03:ec:a9"
+    dev:
+      mac: "08:00:27:2b:c0:18"
+      aliases: {include: config.dev_aliases.yml}
+    gram:
+      mac: "3c:f0:11:4b:2d:af"
+    op6:
+      mac: "64:a2:f9:81:a2:ed"
+    samprint:
+      mac: "84:25:19:15:44:53"
+    nvshield5g:
+      mac: "00:04:4b:8a:41:14"
+    nvshield:
+      mac: "00:04:4b:8a:41:16"

@@ -1,0 +1,21 @@
+PATH
+  remote: ../utils-ruby
+  specs:
+    utils-ruby (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    mini_portile2 (2.4.0)
+    nokogiri (1.10.4)
+      mini_portile2 (~> 2.4.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  nokogiri
+  utils-ruby!
+
+BUNDLED WITH
+   2.0.2

@@ -1,0 +1,33 @@
+<form name="preempt-form" id="preempt-form" method="post" onsubmit="return checkform();" action="">
+<div class="preempt">
+<table border="0" class="table" id="msg-table"><tbody>
+<tr>
+<td valign="top" style="width: 30px;"><img src="img/info.gif"></td>
+<td height="18" align="left" style="padding-left: 10px;">Account logged in at other locations, you c
+an either sign out the location, or click "Cancel" and try again later.</td>
+</tr>
+</tbody></table>
+<table id="preempt-table" class="table inforContent" border="0" cellpadding="0" cellspacing="1"><tbo
+dy>
+
+<tr onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
+<td class="td1">
+<input type="radio" name="index" id="index1" value="1">
+<input type="hidden" name="sid1" value="7606c7b3f406a02f357c1742adbf9756">
+</td>
+<td class="td2"><label for="index1">192.168.1.110 (1234)</label></td>
+</tr>
+
+<tr>
+<td colspan="2" class="btn">
+<div>
+<input type="hidden" value="preempt" name="action">
+<input type="submit" value="Submit" class="button7" id="Btn_Submit" name="Submit">
+<input type="submit" value="Cancel" class="button7" id="Btn_Cancel" name="Submit" onclick="document.
+flogout.submit(); return false;">
+</div>
+</td>
+</tr>
+</tbody></table>
+</div>
+</form>
