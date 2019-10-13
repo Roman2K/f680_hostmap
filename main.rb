@@ -17,30 +17,35 @@ class Router
   DHCPBinding = Struct.new :ip, :mac
 
   def dhcp_bindings
-    table_contents_inst "net_dhcp_static_t", DHCPBinding,
-      "IPAddr", "MACAddr"
+    doc = page_doc("net_dhcp_static_t")
+    table_contents_inst doc, DHCPBinding, "IPAddr", "MACAddr"
   end
 
-  DNSHost = Struct.new :name, :ip
+  DNSHost = Struct.new :name, :ip, :from_dhcp
 
   def dns_hosts
-    table_contents_inst "app_dev_name_t", DNSHost,
-      "HostNamedhcp", "IPAddressdhcp"
+    doc = page_doc "app_dev_name_t"
+    dhcp = table_contents_inst doc, DNSHost, "HostNamedhcp", "IPAddressdhcp"
+    custom = table_contents_inst doc, DNSHost, "HostName", "IPAddress"
+    dhcp.each { |h| h.from_dhcp = true }
+    dhcp + custom
   end
 
-  private def table_contents_inst(page, klass, *attrs)
-    table_contents(page, *attrs).map do |h|
+  private def page_doc(page)
+    Nokogiri::HTML.parse(request(:Get) { |r|
+      r.page_uri = page
+      r.expect Net::HTTPOK, page
+    }.body)
+  end
+
+  private def table_contents_inst(doc, klass, *attrs)
+    table_contents(doc, *attrs).map do |h|
       klass.new *attrs.map { |k| h.fetch k }
     end
   end
 
-  private def table_contents(page, *attrs)
-    return enum_for :table_contents, page, *attrs unless block_given?
-
-    doc = Nokogiri::HTML.parse(request(:Get) { |r|
-      r.page_uri = page
-      r.expect Net::HTTPOK, page
-    }.body)
+  private def table_contents(doc, *attrs)
+    return enum_for :table_contents, doc, *attrs unless block_given?
 
     val_re = attrs.map { |a| Regexp.escape a }.yield_self do |as|
       /\bTransfer_meaning\('(#{as.join "|"})(\d+)','(.+?)'\);/
@@ -101,8 +106,7 @@ class Router
     end
 
     # List of currently active sessions: close the first one and try again
-    doc = Nokogiri::HTML.parse resp.body
-    tbl = doc.css("#preempt-form").first \
+    tbl = Nokogiri::HTML.parse(resp.body).css("#preempt-form").first \
       or raise "missing list of active sessions"
     $stderr.puts "already logged in elsewhere: %s" \
       % [tbl.css("label").map(&:text) * ", "]
