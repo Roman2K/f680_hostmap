@@ -17,6 +17,10 @@ end
 def dhcp_bindings; Sections::DHCPBindings.new self end
 def dns_hosts; Sections::DNSHosts.new self end
 
+def self.[](section, *args)
+  Sections.const_get(section)::Record.new(nil, *args)
+end
+
 module Sections
   class BasicSection
     def initialize(router)
