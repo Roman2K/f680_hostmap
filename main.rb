@@ -4,33 +4,93 @@ require_relative 'router'
 config = Utils::Conf.new "config.yml"
 router = Router.new url: config["router.url"],
   **config["router.credentials"].slice(:login, :password)
+ip_range = Range.new *config["dhcp.range"].values_at(:start, :end).
+  map { |addr| IPAddr.new addr }
+bindings = config["dhcp.bindings"].to_hash
 
-# pp dhcp_bindings: router.dhcp_bindings.all
-# puts "creating", c = Router[:DHCPBindings, "192.168.1.6", "dd:dd:dd:dd:dd:dd"]
-  
-# pp creating: c
-# created, list = router.dhcp_bindings.create c
-# pp created: created
-# pp after_create: list
+class ConfigUpdate
+  def initialize(dhcp, dns)
+    @dhcp, @dns = dhcp, dns.reject(&:from_dhcp)
+  end
 
-# list.reverse_each do |b|
-#   old, list = router.dhcp_bindings.delete b
-#   pp old: old, deleted: b
-# end
-# pp after_delete: list
+  Binding = Struct.new :mac, :names
+  Diff = Struct.new :dhcp_new, :dhcp_del, :dns_new, :dns_del
 
-list = nil
-(2..2).each do |n|
-  pp creating: h = Router[:DNSHosts, "winpc#{n}", "192.168.1.110"]
-  created, list = router.dns_hosts.create h
-  pp created: h
+  def diff(bindings, ip_range)
+    dhcp = {}
+    bindings.each do |want|
+      b = @dhcp.find { |b| b.mac.downcase == want.mac.downcase } \
+        || Router[:DHCPBindings, nil, want.mac]
+      dns = want.names.map { |name|
+        @dns.find { |h| h.name == name } || Router[:DNSHosts, name]
+      }
+      dhcp[b] = dns
+    end
+
+    # Assign IPs
+    seq = ip_range.each
+    used = Set.new(dhcp.keys.map { |b| b.ip and IPAddr.new b.ip }.compact)
+    next_ip = -> do
+      begin
+        seq.next
+      rescue StopIteration
+        raise "run out of IPs - used #{used.size} of #{ip_range.count}"
+      end
+    end
+    dhcp.each_key do |b|
+      !b.ip or next
+      begin; free = next_ip[] end while used.include? free
+      b.ip = free.to_s
+      used << free
+    end
+
+    # Assign DNS names
+    dhcp.each do |b, dns|
+      dns.map! do |host|
+        host.ip == b.ip ? host : Router[:DNSHosts, host.name, b.ip]
+      end
+    end
+
+    Diff.new.tap do |d|
+      d.dhcp_del, d.dhcp_new = dhcp.keys.yield_self do |bs|
+        old, new = bs.partition &:id
+        [@dhcp - old, new]
+      end
+      d.dns_del, d.dns_new = dhcp.flat_map { |b, dns| dns }.yield_self do |dns|
+        old, new = dns.partition &:id
+        [@dns - old, new]
+      end
+    end
+  end
 end
-pp after_create: list
 
-list = nil
-router.dns_hosts.all.reverse_each do |h|
-  h.id or next
-  pp deleting: h
-  _, list = router.dns_hosts.delete h
+diff = ConfigUpdate.new(router.dhcp_bindings.all, router.dns_hosts.all).diff \
+  bindings.map { |name, b|
+    ConfigUpdate::Binding[b[:mac], [name.to_s, *b.lookup(:aliases)]]
+  },
+  ip_range
+
+pp diff: diff
+
+def progress(title, arr)
+  last = nil
+  print = -> s do
+    s = "\r%s: %s" % [title, s]
+    s = s.ljust last if last
+    last = s.length
+    Kernel.print s
+  end
+
+  print["..."]
+  arr.each_with_index do |el, idx|
+    yield el
+    print[Utils::Fmt.pct((idx+1).to_f/arr.size, 0)]
+  end
+  print["done"]
+  puts
 end
-pp after_delete: list
+
+progress(:dhcp_del, diff.dhcp_del) { |b| router.dhcp_bindings.delete b }
+progress(:dns_del, diff.dns_del) { |h| router.dns_hosts.delete h }
+progress(:dhcp_new, diff.dhcp_new) { |b| router.dhcp_bindings.create b }
+progress(:dns_new, diff.dns_new) { |h| router.dns_hosts.create h }
