@@ -10,7 +10,8 @@ bindings = config["dhcp.bindings"].to_hash
 
 class ConfigUpdate
   def initialize(dhcp, dns)
-    @dhcp, @dns = dhcp, dns.reject(&:from_dhcp)
+    @dhcp = dhcp
+    @dns = dns.reject(&:from_dhcp)
   end
 
   Binding = Struct.new :mac, :names
@@ -19,8 +20,9 @@ class ConfigUpdate
   def diff(bindings, ip_range)
     dhcp = {}
     bindings.each do |want|
-      b = @dhcp.find { |b| b.mac.downcase == want.mac.downcase } \
-        || Router[:DHCPBindings, nil, want.mac]
+      b = @dhcp.find { |b|
+        b.mac.downcase == want.mac.downcase && ip_range.cover?(IPAddr.new b.ip)
+      } || Router[:DHCPBindings, nil, want.mac]
       dns = want.names.map { |name|
         @dns.find { |h| h.name == name } || Router[:DNSHosts, name]
       }
@@ -64,30 +66,30 @@ class ConfigUpdate
   end
 end
 
-diff = ConfigUpdate.new(router.dhcp_bindings.all, router.dns_hosts.all).diff \
+diff = ConfigUpdate.new(
+  router.dhcp_bindings.all,
+  router.dns_hosts.all,
+).diff(
   bindings.map { |name, b|
     ConfigUpdate::Binding[b[:mac], [name.to_s, *b.lookup(:aliases)]]
   },
-  ip_range
+  ip_range,
+)
 
-pp diff: diff
+pp diff: diff.to_h.transform_values { |arr| arr.map &:to_s }
 
 def progress(title, arr)
-  last = nil
-  print = -> s do
-    s = "\r%s: %s" % [title, s]
-    s = s.ljust last if last
-    last = s.length
-    Kernel.print s
+  puts = -> s, idx=nil do
+    pct = Utils::Fmt.pct((idx + 1).to_f / arr.size, 0) if idx
+    Kernel.puts "%s%s: %s" % [title, (" #{pct}" if pct), s]
   end
 
-  print["..."]
+  puts["..."]
   arr.each_with_index do |el, idx|
     yield el
-    print[Utils::Fmt.pct((idx+1).to_f/arr.size, 0)]
+    puts[el, idx]
   end
-  print["done"]
-  puts
+  puts["done"]
 end
 
 progress(:dhcp_del, diff.dhcp_del) { |b| router.dhcp_bindings.delete b }

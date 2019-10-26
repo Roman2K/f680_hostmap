@@ -1,3 +1,5 @@
+/docker-compose.yml
+
+/config.yml
 /config.credentials.yml
 /config.dev_aliases.yml
-/config.yml

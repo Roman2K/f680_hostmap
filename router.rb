@@ -14,8 +14,9 @@ def initialize(url:, login:, password:)
   @passwd_digest = Digest::SHA256.hexdigest(password + @passwd_rand)
 end
 
-def dhcp_bindings; Sections::DHCPBindings.new self end
-def dns_hosts; Sections::DNSHosts.new self end
+def dhcp_leases;    Sections::DHCPLeases.new self end
+def dhcp_bindings;  Sections::DHCPBindings.new self end
+def dns_hosts;      Sections::DNSHosts.new self end
 
 def self.[](section, *args)
   Sections.const_get(section)::Record.new(nil, *args)
@@ -40,7 +41,8 @@ module Sections
       all = records_from_page(page)
 
       created = all.find { |r| r.id && r.form_values == new.form_values } \
-        or raise "failed to create #{self.class::RECORD_DESC}"
+        or raise "failed to create %s %p" \
+          % [self.class::RECORD_DESC, new.form_values]
 
       [created, all]
     end
@@ -83,14 +85,31 @@ module Sections
     end
   end
 
+  module BasicRecord
+    def to_s
+      class_desc = (self.class.name[/.+::/] or raise "unexpected namespacing").
+        chomp("::").
+        split("::").
+        inject(Object) { |c,n| c.const_get n }::RECORD_DESC
+
+      "%s%s %s" % [class_desc, (id ? "##{id}" : "*"), desc]
+    end
+  end
+
   class DHCPBindings < BasicSection
     PAGE = :dhcp_bindings
     RECORD_DESC = "DHCP binding"
 
     Record = Struct.new :id, :ip, :mac do
+      include BasicRecord
+
       def form_values
         { "IPAddr" => ip,
           "MACAddr" => mac }
+      end
+
+      protected def desc
+        "#{ip} @ #{mac}"
       end
     end
 
@@ -104,9 +123,17 @@ module Sections
     RECORD_DESC = "DNS host"
 
     Record = Struct.new :id, :name, :ip, :from_dhcp do
+      include BasicRecord
+
       def form_values
         { "HostName" => name,
           "IPAddress" => ip }
+      end
+
+      protected def desc
+        "#{name} @ #{ip}".tap { |s|
+          s << " [DHCP]" if from_dhcp
+        }
       end
     end
 
@@ -120,6 +147,18 @@ module Sections
       custom = page.table_contents_inst Record, "HostName", "IPAddress"
       dhcp.each { |h| h.id = nil; h.from_dhcp = true }
       dhcp + custom
+    end
+  end
+
+  class DHCPLeases < BasicSection
+    PAGE = "net_dhcp_dynamic_t"
+
+    Record = Struct.new :id, :mac, :ip, :time, :port, :name
+
+    protected def records_from_page(page)
+      page.table_contents_inst Record,
+        *%w( MACAddr IPAddr ExpiredTime PhyPortName ),
+        opt: %w( HostName )
     end
   end
 end
@@ -138,9 +177,9 @@ class Page
       or raise "missing session token"
   end
 
-  def table_contents_inst(klass, *attrs)
+  def table_contents_inst(klass, *attrs, opt: [])
     table_contents(*attrs).map do |id, h|
-      klass.new id, *attrs.map { |k| h.fetch k }
+      klass.new id, *attrs.map { |k| h.fetch k }, *opt.map { |k| h[k] }
     end
   end
 

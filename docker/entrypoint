@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+set -e
+
+ruby gen.rb && bundle exec ruby main.rb
