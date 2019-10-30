@@ -6,6 +6,8 @@ STATIC_NAMES = %w(
   traefik
   wis-squid
   qbt
+  plex
+  router
 )
 
 conf = File.open(IN, 'r') { |f| YAML.load f }
