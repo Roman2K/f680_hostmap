@@ -1,22 +1,25 @@
+require 'net/http'
+require 'json'
 require 'yaml'
+require 'set'
 
-IN = "docker-compose.yml"
-OUT = "config.dev_aliases.yml"
+ROUTERS_URL = "http://traefik.home/api/http/routers".freeze
+OUT = "config.dev_aliases.yml".freeze
 STATIC_NAMES = %w(
-  traefik
   wis-squid
-  qbt
-  plex
-  router
-)
+).freeze
 
-conf = File.open(IN, 'r') { |f| YAML.load f }
-names = STATIC_NAMES.dup
-conf.fetch("services").each do |name, s|
-  if s.fetch("labels", {})["traefik.enable"]
-    names << name
+routers = JSON.parse(Net::HTTP.get_response(URI(ROUTERS_URL)).tap { |r|
+  Net::HTTPOK === r or raise "unexpected response"
+}.body)
+
+names = Set.new(STATIC_NAMES).tap { |set|
+  routers.each do |r|
+    r.fetch("rule").scan(/`(.+?)\.home`/) do
+      set << $1
+    end
   end
-end
+}.to_a
 
 File.open OUT, 'w' do |f|
   [$stdout, f].each do |io|
