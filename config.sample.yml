@@ -1,11 +1,23 @@
+caddy:
+  admin_url: "http://caddy:2019"
+  domains:
+    - home
+    - home.romanlenegrate.net
+  services:
+    static:
+      qbt: "winpc.home:8080"
+      plex: "winpc.home:32400"
+      router: "192.168.1.1"
+    extras:
+      - wis-squid
 router:
   url: "http://192.168.1.1"
   credentials: {include: config.credentials.yml}
 dhcp:
   range:
-    start: "192.168.1.2"
-    end: "192.168.1.100"
-  binding:
+    start: "192.168.1.101"
+    end: "192.168.1.254"
+  bindings:
     winpc:
       mac: "30:9c:23:03:ec:a9"
     dev:
@@ -13,8 +25,6 @@ dhcp:
       aliases: {include: config.dev_aliases.yml}
     gram:
       mac: "3c:f0:11:4b:2d:af"
-    op6:
-      mac: "64:a2:f9:81:a2:ed"
     samprint:
       mac: "84:25:19:15:44:53"
     nvshield5g:
