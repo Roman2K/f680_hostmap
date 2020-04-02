@@ -86,9 +86,9 @@ end
 
 class Container
   def initialize(props)
-    labels = Labels.new props.fetch "Labels"
-    @traefik_enable = labels.lookup("traefik.enable") == "True"
-    @service_name = labels.lookup("com.docker.compose.service")
+    labels = props.fetch "Labels"
+    @traefik_enable = labels["traefik.enable"] == "True"
+    @service_name = labels["com.docker.compose.service"]
     @private_port = determine_port(props.fetch("Ports"), labels)
   end
 
@@ -99,37 +99,9 @@ class Container
 
   private def determine_port(ports, labels)
     key = "traefik.http.services.#{@service_name}.loadbalancer.server.port"
-    labels.lookup(key)&.to_i \
+    labels[key]&.to_i \
       || ports.find { |p| p.fetch("Type") == "tcp" }&.fetch("PrivatePort")
   end
-end
-
-class Labels < Hash
-  def initialize(labels)
-    labels.each do |key,val|
-      *parents, key = key.split(".")
-      h = parents.inject(self) { |cur_h, key_part| cur_h[key_part] ||= {} }
-      unless Hash === h
-        raise "label tree at #{parents * "."} is already assigned"
-      end
-      if h.key? key
-        raise "label at #{[*parents, key] * "."} already exists"
-      end
-      h[key] = val
-    end
-  end
-
-  def lookup(*keys)
-    keys = keys.flat_map { |k| k.split "." }
-    keys.each_with_index.inject(self) do |h,(k,i)|
-      unless Hash === h
-        raise "label at #{keys[0,i] * "."} is not a hash (%p)" % [h]
-      end
-      h[k] or return
-    end
-  end
-
-  attr_reader :labels
 end
 
 class CaddyClient
