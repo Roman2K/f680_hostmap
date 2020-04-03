@@ -5,7 +5,7 @@ require 'pp'
 class SimpleHTTP
   def initialize(uri, json: false)
     uri = URI uri if String === uri
-    @client =
+    @get_client = -> do
       case uri
       when URI
         uri.path.chomp("/") == "" or raise "non-root path unsupported"
@@ -13,7 +13,15 @@ class SimpleHTTP
       else
         uri
       end
+    end
     @type_config = TypeConf.new json: json
+  end
+
+  private def client
+    if @get_client
+      @client, @get_client = @get_client.call, nil
+    end
+    @client
   end
 
   class TypeConf
@@ -43,7 +51,7 @@ class SimpleHTTP
   end
 
   private def request(req, expect:, **opts)
-    case resp = @client.request(req)
+    case resp = client.request(req)
     when *expect
     else
       raise "unexpected response: #{resp.code} (#{resp.body})"
