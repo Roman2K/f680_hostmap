@@ -1,89 +1,13 @@
 require 'net_x/http_unix'
-require 'json'
 require 'pp'
-
-class SimpleHTTP
-  def initialize(uri, json: false)
-    uri = URI uri if String === uri
-    @get_client = -> do
-      case uri
-      when URI
-        uri.path.chomp("/") == "" or raise "non-root path unsupported"
-        Net::HTTP.start uri.host, uri.port, use_ssl: uri.scheme == 'https'
-      else
-        uri
-      end
-    end
-    @type_config = TypeConf.new json: json
-  end
-
-  private def client
-    if @get_client
-      @client, @get_client = @get_client.call, nil
-    end
-    @client
-  end
-
-  class TypeConf
-    def initialize(opts)
-      @json_in = @json_out = false
-      update opts
-    end
-
-    attr_reader :json_in, :json_out
-
-    def merge(opts)
-      dup.update opts
-    end
-
-    def update(opts)
-      opts = opts.dup
-      @json_in = @json_out = opts.delete :json if opts.key? :json
-      @json_in = opts.delete :json_in if opts.key? :json_in
-      @json_out = opts.delete :json_out if opts.key? :json_out
-      opts.empty? or raise "unrecognized opts: %p" % [opts.keys]
-      self
-    end
-  end
-
-  def get(path)
-    request Net::HTTP::Get.new(path), expect: [Net::HTTPOK]
-  end
-
-  private def request(req, expect:, **opts)
-    case resp = client.request(req)
-    when *expect
-    else
-      raise "unexpected response: #{resp.code} (#{resp.body})"
-    end
-    if @type_config.merge(opts).json_out
-      JSON.parse resp.body
-    else
-      resp
-    end
-  end
-
-  def patch(*args, **opts, &block)
-    request_body Net::HTTP::Patch, *args, expect: [Net::HTTPOK], **opts, &block
-  end
-
-  private def request_body(cls, path, payload, expect:, **opts)
-    req = cls.new path
-    if @type_config.merge(opts).json_in && !payload.kind_of?(String)
-      req['Content-Type'] = "application/json"
-      payload = JSON.dump payload 
-    end
-    req.body = payload
-    request req, expect: expect, **opts
-  end
-end
+require 'utils'
 
 class DockerClient
   SOCK_PATH = "/var/run/docker.sock"
   API_VER = "1.40"
 
   def initialize
-    @client = SimpleHTTP.new NetX::HTTPUnix.new('unix://' + SOCK_PATH),
+    @client = Utils::SimpleHTTP.new NetX::HTTPUnix.new('unix://' + SOCK_PATH),
       json: true
   end
 
@@ -114,7 +38,7 @@ end
 
 class CaddyClient
   def initialize(url, log:)
-    @client = SimpleHTTP.new url, json: true
+    @client = Utils::SimpleHTTP.new url, json: true
     @log = log["caddy"]
   end
 
@@ -158,7 +82,7 @@ class Cmds
       services[svc] = "#{svc}:#{port}"
     end
 
-    caddy.set_config "/apps/http/servers/main/routes",
+    caddy.set_config("/apps/http/servers/main/routes",
       services.map { |name, url|
         { match: [
             {host: conf["domains"].map { |d| "#{name}.#{d}" }},
@@ -168,6 +92,7 @@ class Cmds
               upstreams: [{dial: url}] },
           ] }
       }
+    ) unless conf["ro"]
 
     services
   end
@@ -183,6 +108,5 @@ class Cmds
 end
 
 if $0 == __FILE__
-  require 'utils'
   Cmds.new(Utils::Conf.new "config.yml").cmd_gen
 end
