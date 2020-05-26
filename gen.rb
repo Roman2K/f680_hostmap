@@ -22,12 +22,14 @@ class Container
     @traefik_enable = labels["traefik.enable"] == "True"
     @service_name = labels["com.docker.compose.service"]
     @private_port = determine_port(props.fetch("Ports"), labels)
+    @oneoff = labels["com.docker.compose.oneoff"] == "True"
   end
 
   attr_reader \
     :traefik_enable,
     :service_name,
-    :private_port
+    :private_port,
+    :oneoff
 
   private def determine_port(ports, labels)
     key = "traefik.http.services.#{@service_name}.loadbalancer.server.port"
@@ -74,11 +76,11 @@ class Cmds
     services = conf["services.static"].to_hash
     docker.get_json("/containers/json").each do |props|
       ctn = Container.new props
-      ctn.traefik_enable or next
+      next unless ctn.traefik_enable && !ctn.oneoff
       port = ctn.private_port or next
       svc = ctn.service_name or next
       svc.length >= 1 or raise "invalid service name: %p" % [svc]
-      !services.key?(svc) or raise "duplicate service: %p" % [svc]
+      raise "duplicate service: %p" % [svc] if services.key? svc
       services[svc] = "#{svc}:#{port}"
     end
 
